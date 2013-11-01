@@ -36,6 +36,9 @@ var LetterArranger = function(lines) {
     this.assignmentOffset = 0;
     // A reference to the dancing letters interval:
     this.interval = null;
+    // The width and height of the body document that you are dealing with.
+    this.bodyHeight = null;
+    this.bodyWidth = null;
 
     /**
      * Evaluate each of the passed in line descriptions, and prepare the document to be ... played with.
@@ -44,7 +47,7 @@ var LetterArranger = function(lines) {
     this.init = function() {
         var totalRange = 0;
 
-        // Remove all stylesheets from the document.
+        // Add base styling to make this all possible:
         this._prepDocument();
 
         for (var n=0; n<this.lines.length; n++) {
@@ -70,6 +73,11 @@ var LetterArranger = function(lines) {
 
         // Wrap all the letters in a span tag and get the returned list.
         this.letters = this._wrapLetters();
+
+        // Set the x y default position of each of the letters.
+        // *Note - this is done in a separate step because if you apply the
+        this._positionLetters();
+
         this.letterNum = this.letters.length;
 
         // For each line, figure out how many letters should be assigned to that line:
@@ -96,7 +104,23 @@ var LetterArranger = function(lines) {
     this._prepDocument = function() {
         $('link').remove();
 
-        $('body').css('position', 'relative'); 
+        var styles = '';
+
+
+        styles += '<style>';
+        styles += '.nerp { position: absolute; } ';
+//        styles += 'body { position : relative; width : '+ width +'; height : '+ height +';}';
+        styles += 'body { position : relative; min-width : 100%; min-height: 100%;}';
+        styles += '</style>';
+
+        var style = $(styles);
+        $('html > head').append(style);
+
+        var width = document.getElementsByTagName('body')[0].offsetWidth;
+        var height = document.getElementsByTagName('body')[0].offsetHeight;
+
+        this.bodyHeight = height;
+        this.bodyWidth = width;
     }
 
     /**
@@ -116,9 +140,6 @@ var LetterArranger = function(lines) {
                 var newSpan = document.createElement('span');
 
                 newSpan.setAttribute('class', 'nerp');
-                newSpan.style.position = 'relative';
-                newSpan.style.top = '0px';
-                newSpan.style.left = '0px';
 
                 newSpan.appendChild( document.createTextNode(textArr[x]) );
                 parentElement.appendChild( newSpan, textArr[x]);
@@ -127,6 +148,26 @@ var LetterArranger = function(lines) {
 
         return document.getElementsByClassName('nerp');
     };
+
+
+    /**
+     * @private
+     */
+    this._positionLetters = function(){
+
+        $('.nerp').each(function(){
+
+            var position = $(this).position();
+            $(this).data('top', position.top);
+            $(this).data('left', position.left);
+
+        });
+
+        $('.nerp').each(function(){
+            $(this).css({left : $(this).data('left') + 'px', top : $(this).data('top')+ 'px'});
+        });
+
+    }
 
 
     /**
@@ -161,18 +202,29 @@ var LetterArranger = function(lines) {
 
         // Now plot the points on the line based on the lower bound and the interval:
         for (var x=0; x < numLetters; x++) {
-            var x1 = lower + (x * interval);
-            var y = equation(x1);
+            var x1 = lower + (x * interval),
+                y = equation(x1),
 
-            var coordinates = [x1,y];
+            // now find the coordinates relative to the width of the document, expecting that 0 is the midline of the
+            // document on both the x and y axis
+                relativeX = x1 + (this.bodyWidth / 2),
+                relativeY = y + (this.bodyHeight / 2);
+
+            var coordinates = [relativeX,relativeY];
             line.plot.push(coordinates);
 
-//            console.log(this.assignmentOffset, this.letters.length)
             this.letters[this.assignmentOffset].plotPoint = coordinates;
             this.assignmentOffset++;
         }
     }
 
+
+    /**
+     * Stop the dance.
+     */
+    this.stopDancing = function() {
+        clearInterval(this.interval);
+    }
 
     /**
      * Makes all the letters on the page dance moving closer to their coordinates:
@@ -187,31 +239,18 @@ var LetterArranger = function(lines) {
                     currX, currY, targetX, targetY, newX, newY;
 
                 currX = parseInt(letter.style.left.split('px')[0]);
-                currY = parseInt(letter.style.left.split('px')[0]);
+                currY = parseInt(letter.style.top.split('px')[0]);
 
-//                console.log('what is not defined about this? ', letter.plotPoint);
                 targetX = parseInt(letter.plotPoint[0]);
                 targetY = parseInt(letter.plotPoint[1]);
-                newX = currX <= targetX ? (currX + 10) : (currX - 10);
-                newY = currY <= targetY ? (currY + 10) : (currY - 10);
-
-//                if (Math.random(0,10) > .5) {
-//                    x = parseInt(x) + 2;
-//                } else {
-//                    x = parseInt(x) - 2;
-//                }
-//                if (Math.random(0,10) > .5) {
-//                    y = parseInt(y) + 2;
-//                } else {
-//                    y = parseInt(y) - 2;
-//                }
+                newX = currX <= targetX ? (currX + 20) : (currX - 20);
+                newY = currY <= targetY ? (currY + 20) : (currY - 20);
 
                 letter.style.color = self._newColor();
-                letter.style.bottom = newY+'px';
+                letter.style.top = newY+'px';
                 letter.style.left = newX+'px';
             }
-        },1000);
-
+        },100);
     }
 
     this._newColor = function() {
@@ -226,8 +265,8 @@ var LetterArranger = function(lines) {
 }
 
 
-var app = app || {};
 
+var arranger;
 
 $(document).ready(function(){
 
@@ -239,16 +278,16 @@ $(document).ready(function(){
                 return x;
             }
         }, {
-            yLower : -200,
-            yUpper : 200,
+            xLower : -200,
+            xUpper : 200,
             equation : function(x) {
                 return (-1 * x);
             }
         }
     ];
 
-    app.arranger = new LetterArranger(lines);
-    app.arranger.init();
+    arranger = new LetterArranger(lines);
+    arranger.init();
 
 });
 
