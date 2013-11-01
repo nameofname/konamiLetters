@@ -20,14 +20,15 @@
  *
  * @param lines
  */
-var letter_arranger = function(lines) {
+var LetterArranger = function(lines) {
 
     var self = this;
 
     this.lines = lines;
 
-    // This will be a reference to all of the wrapped letters on the page.
-    this.letters = null;
+    // References to all of the wrapped letters on the page, and all the text nodes on the page:
+    this.letters = [];
+    this.textNodes = [];
     // The number of letters on the page:
     this.letterNum = null;
     // The offset for the current letter being assinged a point - starting at 0 and used as a place holder for when
@@ -40,16 +41,19 @@ var letter_arranger = function(lines) {
      * Evaluate each of the passed in line descriptions, and prepare the document to be ... played with.
      * @private
      */
-    this._init = function() {
+    this.init = function() {
         var totalRange = 0;
+
+        // Remove all stylesheets from the document.
+        this._prepDocument();
 
         for (var n=0; n<this.lines.length; n++) {
             var line = this.lines[n];
 
             // First get the range of the line based on either the x or y boundaries:
-            if (line.hasOwnProperty(xLower) && line.hasOwnProperty(xUpper)) {
+            if (line.hasOwnProperty('xLower') && line.hasOwnProperty('xUpper')) {
                 line.range = line.xUpper - line.xLower;
-            } else if (line.hasOwnProperty(yLower) && line.hasOwnProperty(yUpper)) {
+            } else if (line.hasOwnProperty('yLower') && line.hasOwnProperty('yUpper')) {
                 line.range = line.yUpper - line.yLower;
 
             // If the line has no bounds, then throw an error.
@@ -76,20 +80,23 @@ var letter_arranger = function(lines) {
             // multiplied by the total number of letters in the document.
             // TODO!!! VALIDATE THIS ASSUMPTION!
             line.numLetters = Math.floor(this.letterNum * (line.range / totalRange));
-            console.log('found the num of letters for this line', line.numLetters);
 
             // Find the interval of the line based on the number of letters divided by the range:
-            line.interval = line.numLetters / line.range;
+            line.interval = line.range / line.numLetters;
 
             // For each function, invoke it for it's specified range along the specified interval:
             this._createPlot(line);
         }
+    }
 
-        // Now divide the letters among each of the lines:
-        this.letters.each(function(){
-            // AAAAAAAAAAAAAAAAAAAAAAAAAAA!!!!!!!!!!!!
-        });
+    /**
+     * Preps the document to be manipulated. Removes all stylesheets and adds some base styling:
+     * @private
+     */
+    this._prepDocument = function() {
+        $('link').remove();
 
+        $('body').css('position', 'relative'); 
     }
 
     /**
@@ -97,18 +104,8 @@ var letter_arranger = function(lines) {
      * @private
      */
     this._wrapLetters = function() {
-
-        var nodeList = [],
-            treeWalker = document.createTreeWalker(
-                document.body,
-                NodeFilter.SHOW_TEXT,
-                null,
-                false
-            );
-
-        while(treeWalker.nextNode()) {
-            nodeList.push(treeWalker.currentNode);
-        }
+        this._getTextNodes(document.getElementsByTagName('body')[0]);
+        var nodeList = this.textNodes;
 
         for (var i=0; i<nodeList.length; i++){
             var textArr = nodeList[i].nodeValue.split(''),
@@ -133,6 +130,23 @@ var letter_arranger = function(lines) {
 
 
     /**
+     * Via StackOverflow.
+     * User:
+     * http://stackoverflow.com/users/515502/rahat-ahmed
+     */
+    this._getTextNodes = function(element) {
+        if (element.childNodes.length > 0) {
+            for (var i = 0; i < element.childNodes.length; i++) {
+                self._getTextNodes(element.childNodes[i]);
+            }
+        }
+
+        if (element.nodeType == Node.TEXT_NODE && element.nodeValue != '') {
+            self.textNodes.push(element);
+        }
+    }
+
+    /**
      * Creates the (x,y) coordinates for each of the letters in a given line based on the passed line configurations,
      * and the leg work done above.
      * Assigns the (x,y) coordinates to the letters allotted to the given line.
@@ -146,13 +160,14 @@ var letter_arranger = function(lines) {
             equation = line.equation;
 
         // Now plot the points on the line based on the lower bound and the interval:
-        for (var x=lower; x<= numLetters; x++) {
-            x1 = x * interval;
-            y = equation(x1);
+        for (var x=0; x < numLetters; x++) {
+            var x1 = lower + (x * interval);
+            var y = equation(x1);
 
-            var coordinates = [x,y];
+            var coordinates = [x1,y];
             line.plot.push(coordinates);
 
+//            console.log(this.assignmentOffset, this.letters.length)
             this.letters[this.assignmentOffset].plotPoint = coordinates;
             this.assignmentOffset++;
         }
@@ -164,20 +179,21 @@ var letter_arranger = function(lines) {
      */
     this.startDancing = function() {
         this.interval = setInterval(function(){
-            var letters = this.letters;
+            var letters = self.letters;
 
             for (var i=0; i<letters.length; i++) {
 
-                var letter = letter[i],
+                var letter = letters[i],
                     currX, currY, targetX, targetY, newX, newY;
 
-                currX = parseIn(letter.style.left.split('px')[0]);
-                currY = parseIn(letter.style.left.split('px')[0]);
+                currX = parseInt(letter.style.left.split('px')[0]);
+                currY = parseInt(letter.style.left.split('px')[0]);
 
-                targetX = parseIn(letter.plotPoint[0]);
-                targetY = parseIn(letter.plotPoint[1]);
-                newX = currX < = targetX ? (currX + 5) : (currX - 5);
-                newY = currY < = targetY ? (currY + 5) : (currY - 5);
+//                console.log('what is not defined about this? ', letter.plotPoint);
+                targetX = parseInt(letter.plotPoint[0]);
+                targetY = parseInt(letter.plotPoint[1]);
+                newX = currX <= targetX ? (currX + 10) : (currX - 10);
+                newY = currY <= targetY ? (currY + 10) : (currY - 10);
 
 //                if (Math.random(0,10) > .5) {
 //                    x = parseInt(x) + 2;
@@ -194,7 +210,7 @@ var letter_arranger = function(lines) {
                 letter.style.bottom = newY+'px';
                 letter.style.left = newX+'px';
             }
-        },300);
+        },1000);
 
     }
 
@@ -206,8 +222,33 @@ var letter_arranger = function(lines) {
         return color;
     }
 
-
     return this;
 }
 
+
+var app = app || {};
+
+
+$(document).ready(function(){
+
+    var lines = [
+        {
+            xLower : -200,
+            xUpper : 200,
+            equation : function(x) {
+                return x;
+            }
+        }, {
+            yLower : -200,
+            yUpper : 200,
+            equation : function(x) {
+                return (-1 * x);
+            }
+        }
+    ];
+
+    app.arranger = new LetterArranger(lines);
+    app.arranger.init();
+
+});
 
