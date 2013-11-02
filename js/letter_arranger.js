@@ -234,6 +234,7 @@ var LetterArranger = function(lines) {
      * Makes all the letters on the page dance moving closer to their coordinates:
      */
     this.startDancing = function() {
+
         this.interval = setInterval(function(){
             var letters = self.letters;
 
@@ -244,7 +245,6 @@ var LetterArranger = function(lines) {
 
                 currX = parseInt(letter.style.left.split('px')[0]);
                 currY = parseInt(letter.style.top.split('px')[0]);
-
                 targetX = parseInt(letter.plotPoint[0]);
                 targetY = parseInt(letter.plotPoint[1]);
                 newX = currX <= targetX ? (currX + 10) : (currX - 10);
@@ -274,18 +274,77 @@ var arranger;
 
 $(document).ready(function(){
 
+//    var lines = [
+//        {
+//            xLower : -200,
+//            xUpper : 200,
+//            equation : function(x) {
+//                return x;
+//            }
+//        }, {
+//            yLower : -200,
+//            yUpper : 200,
+//            equation : function(x) {
+//                return (-1 * x);
+//            }
+//        }
+//    ];
+
     var lines = [
+        // this one is the smile
         {
-            xLower : -200,
-            xUpper : 200,
+            xLower : -250,
+            xUpper : 250,
             equation : function(x) {
-                return x;
+                x = parseInt(x);
+                var y = Math.sqrt(62500 - (x * x));
+                return y;
+            }
+
+//        }, {
+//            xLower : -250,
+//            xUpper : 250,
+//            equation : function(x) {
+//                x = parseInt(x);
+//                var y = -1 * Math.sqrt(62500 - (x * x));
+//                return y;
+//            }
+//        }
+
+        // The top and bottom of the left eye
+        }, {
+            xLower : -215,
+            xUpper : -185,
+            equation : function(x) {
+                x = parseInt(x);
+                var y = Math.sqrt(225 - Math.pow((x + 200), 2)) - 200;
+                return y;
             }
         }, {
-            yLower : -200,
-            yUpper : 200,
+            xLower : -215,
+            xUpper : -185,
             equation : function(x) {
-                return (-1 * x);
+                x = parseInt(x);
+                var y = -1 * Math.sqrt(225 - Math.pow((x + 200), 2)) - 200;
+                return y;
+            }
+
+        // The top and bottom of the RIGHT eye
+        }, {
+            xLower : 185,
+            xUpper : 215,
+            equation : function(x) {
+                x = parseInt(x);
+                var y = Math.sqrt(225 - Math.pow((x - 200), 2)) - 200;
+                return y;
+            }
+        }, {
+            xLower : 185,
+            xUpper : 215,
+            equation : function(x) {
+                x = parseInt(x);
+                var y = -1 * Math.sqrt(225 - Math.pow((x - 200), 2)) - 200;
+                return y;
             }
         }
     ];
