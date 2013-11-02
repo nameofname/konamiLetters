@@ -105,11 +105,8 @@ var LetterArranger = function(lines) {
         $('link').remove();
 
         var styles = '';
-
-
         styles += '<style>';
-        styles += '.nerp { position: absolute; } ';
-//        styles += 'body { position : relative; width : '+ width +'; height : '+ height +';}';
+//        styles += '.nerp { position: absolute; } ';
         styles += 'body { position : relative; min-width : 100%; min-height: 100%;}';
         styles += '</style>';
 
@@ -122,6 +119,33 @@ var LetterArranger = function(lines) {
         this.bodyHeight = height;
         this.bodyWidth = width;
     }
+
+    /**
+     * @private
+     */
+    this._positionLetters = function(){
+
+        $('.nerp').each(function(){
+
+            var position = $(this).position();
+            $(this).data('top', position.top);
+            $(this).data('left', position.left);
+
+        });
+
+        $('.nerp').each(function(){
+            $(this).css({left : $(this).data('left') + 'px', top : $(this).data('top')+ 'px'});
+        });
+
+        var styles = '';
+        styles += '<style>';
+        styles += '.nerp { position: absolute; } ';
+        styles += '</style>';
+
+        var style = $(styles);
+        $('html > head').append(style);
+    }
+
 
     /**
      * Wrap each of the letters on the page in a span tag, and return a DOM reference to the letters on the page.
@@ -148,26 +172,6 @@ var LetterArranger = function(lines) {
 
         return document.getElementsByClassName('nerp');
     };
-
-
-    /**
-     * @private
-     */
-    this._positionLetters = function(){
-
-        $('.nerp').each(function(){
-
-            var position = $(this).position();
-            $(this).data('top', position.top);
-            $(this).data('left', position.left);
-
-        });
-
-        $('.nerp').each(function(){
-            $(this).css({left : $(this).data('left') + 'px', top : $(this).data('top')+ 'px'});
-        });
-
-    }
 
 
     /**
@@ -243,14 +247,14 @@ var LetterArranger = function(lines) {
 
                 targetX = parseInt(letter.plotPoint[0]);
                 targetY = parseInt(letter.plotPoint[1]);
-                newX = currX <= targetX ? (currX + 20) : (currX - 20);
-                newY = currY <= targetY ? (currY + 20) : (currY - 20);
+                newX = currX <= targetX ? (currX + 10) : (currX - 10);
+                newY = currY <= targetY ? (currY + 10) : (currY - 10);
 
                 letter.style.color = self._newColor();
                 letter.style.top = newY+'px';
                 letter.style.left = newX+'px';
             }
-        },100);
+        },200);
     }
 
     this._newColor = function() {
@@ -278,8 +282,8 @@ $(document).ready(function(){
                 return x;
             }
         }, {
-            xLower : -200,
-            xUpper : 200,
+            yLower : -200,
+            yUpper : 200,
             equation : function(x) {
                 return (-1 * x);
             }
