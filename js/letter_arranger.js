@@ -125,7 +125,6 @@ var LetterArranger = function(lines) {
 
         var styles = '';
         styles += '<style>';
-//        styles += '.nerp { position: absolute; } ';
         styles += 'body { position : relative; min-width : 100%; min-height: 100%;}';
         styles += '</style>';
 
@@ -205,7 +204,7 @@ var LetterArranger = function(lines) {
             }
         }
 
-        if (element.nodeType == Node.TEXT_NODE && element.nodeValue != '') {
+        if (element.nodeType == Node.TEXT_NODE && element.nodeValue.trim() != '') {
             self.textNodes.push(element);
         }
     }
@@ -266,8 +265,18 @@ var LetterArranger = function(lines) {
                 currY = parseInt(letter.style.top.split('px')[0]);
                 targetX = parseInt(letter.plotPoint[0]);
                 targetY = parseInt(letter.plotPoint[1]);
-                newX = currX <= targetX ? (currX + 10) : (currX - 10);
-                newY = currY <= targetY ? (currY + 10) : (currY - 10);
+
+                if (Math.abs(currX - targetX) <= 10) {
+                    newX = currX <= targetX ? (currX + 2) : (currX - 2);
+                } else {
+                    newX = currX <= targetX ? (currX + 10) : (currX - 10);
+                }
+
+                if (Math.abs(currY - targetY) <= 10) {
+                    newY = currY <= targetY ? (currY + 2) : (currY - 2);
+                } else {
+                    newY = currY <= targetY ? (currY + 10) : (currY - 10);
+                }
 
                 letter.style.color = self._newColor();
                 letter.style.top = newY+'px';
@@ -283,6 +292,10 @@ var LetterArranger = function(lines) {
         }
         return color;
     }
+
+    //this.posInt = function(x) {
+    //    return Math.abs(Math.floor(x)); 
+    //} 
 
     return this;
 }
