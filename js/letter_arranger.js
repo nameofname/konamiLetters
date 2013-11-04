@@ -21,6 +21,7 @@
  * @param lines
  */
 var LetterArranger = function(lines) {
+    "use strict";
 
     var self = this;
 
@@ -92,12 +93,12 @@ var LetterArranger = function(lines) {
 
         // For each line, figure out how many letters should be assigned to that line:
         for (var i=0; i< this.lines.length; i++) {
-            var line = this.lines[i];
+            var linea = this.lines[i];
 
             // The lines number of letters is the ratio of the lines range by the total range of all lines passed,
             // multiplied by the total number of letters in the document.
-            line.numLetters = Math.floor(this.letterNum * (line.range / totalRange));
-            this.totalLettersUsed += line.numLetters;
+            linea.numLetters = Math.floor(this.letterNum * (linea.range / totalRange));
+            this.totalLettersUsed += linea.numLetters;
         }
 
         // Note * Since we are using Math.floor to calculate the numLetters - sometimes there will be a small remainder.
@@ -112,15 +113,15 @@ var LetterArranger = function(lines) {
         // Now that we have assigned all the letters to one line or another, figure out the interval for each line,
         // and create a plot for each line.
         for (var j=0; j< this.lines.length; j++) {
-            var line = this.lines[j];
+            var lineb = this.lines[j];
 
             // Find the interval of each line based on the number of letters divided by the range:
-            line.interval = line.range / line.numLetters;
+            lineb.interval = lineb.range / lineb.numLetters;
 
             // For each function, invoke it for it's specified range along the specified interval:
-            this._createPlot(line);
+            this._createPlot(lineb);
         }
-    }
+    };
 
     /**
      * Preps the document to be manipulated. Removes all stylesheets and adds some base styling:
@@ -142,7 +143,7 @@ var LetterArranger = function(lines) {
 
         this.bodyHeight = height;
         this.bodyWidth = width;
-    }
+    };
 
     /**
      * @private
@@ -168,7 +169,7 @@ var LetterArranger = function(lines) {
 
         var style = $(styles);
         $('html > head').append(style);
-    }
+    };
 
 
     /**
@@ -213,7 +214,7 @@ var LetterArranger = function(lines) {
         if (element.nodeType == Node.TEXT_NODE && element.nodeValue.trim() != '') {
             self.textNodes.push(element);
         }
-    }
+    };
 
     /**
      * Creates the (x,y) coordinates for each of the letters in a given line based on the passed line configurations,
@@ -244,7 +245,7 @@ var LetterArranger = function(lines) {
             this.letters[this.assignmentOffset].plotPoint = coordinates;
             this.assignmentOffset++;
         }
-    }
+    };
 
 
     /**
@@ -252,7 +253,7 @@ var LetterArranger = function(lines) {
      */
     this.stopDancing = function() {
         clearInterval(this.interval);
-    }
+    };
 
     /**
      * Makes all the letters on the page dance moving closer to their coordinates:
@@ -289,7 +290,7 @@ var LetterArranger = function(lines) {
                 letter.style.left = newX+'px';
             }
         },200);
-    }
+    };
 
     /**
      * Generate a new random RGB color.
@@ -300,7 +301,7 @@ var LetterArranger = function(lines) {
             return Math.floor(Math.random() * 256 - 1);
         }
         return color;
-    }
+    };
 
     this.konami = function() {
         document.onkeydown = function(e) {
@@ -327,17 +328,20 @@ var LetterArranger = function(lines) {
                 self.init();
                 self.startDancing();
             }
-        }
-    }
+        };
+    };
 
     return this;
-}
+};
 
 
 $(document).ready(function(){
+    "use strict";
 
-    arranger = new LetterArranger(happy_face);
+    var arranger = new LetterArranger(happy_face);
     arranger.konami();
 
+    // This is only for the example so I can play in the console. 
+    window.arranger = arranger;
 });
 
