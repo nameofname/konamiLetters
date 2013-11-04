@@ -27,7 +27,7 @@ var LetterArranger = function(lines) {
 
     if (!lines) {
         throw new Error('You cannot initialize the LetterArranger without an array of lines.');
-    } 
+    }
 
     this.lines = lines;
 
@@ -68,7 +68,7 @@ var LetterArranger = function(lines) {
             } else if (line.hasOwnProperty('yLower') && line.hasOwnProperty('yUpper')) {
                 line.range = line.yUpper - line.yLower;
 
-            // If the line has no bounds, then throw an error.
+                // If the line has no bounds, then throw an error.
             } else {
                 throw new Error('You must include either x or y boundaries for each line configuration passed');
             }
@@ -132,7 +132,8 @@ var LetterArranger = function(lines) {
 
         var styles = '';
         styles += '<style>';
-        styles += 'body { position : relative; min-width : 100%; min-height: 100%;}';
+        styles += 'html { min-height: 100%;}';
+        styles += 'body { position : absolute; min-width : 100%; min-height: 100%;}';
         styles += '</style>';
 
         var style = $(styles);
@@ -152,15 +153,12 @@ var LetterArranger = function(lines) {
 
         $('.nerp').each(function(){
 
-            var position = $(this).position();
+            var position = $(this).offset();
             $(this).data('top', position.top);
             $(this).data('left', position.left);
 
             $(this).css({left : $(this).data('left') + 'px', top : $(this).data('top')+ 'px'});
         });
-
-        //$('.nerp').each(function(){
-        //});
 
         var styles = '';
         styles += '<style>';
@@ -169,6 +167,11 @@ var LetterArranger = function(lines) {
 
         var style = $(styles);
         $('html > head').append(style);
+
+        // Now select all of the .nerp elements on the page, and remove them temporarily:
+        var $nerps = $('.nerp').detach();
+        $('body').empty();
+        $('body').append($nerps);
     };
 
 
@@ -186,12 +189,17 @@ var LetterArranger = function(lines) {
 
             parentElement.removeChild(nodeList[i]);
             for (var x=0; x<textArr.length; x++) {
-                var newSpan = document.createElement('span');
 
-                newSpan.setAttribute('class', 'nerp');
+                // Do a double check here for empty string text nodes (do not use the empty strings in between
+                // other full strings):
+                if (textArr[x] !== ' ') {
+                    var newSpan = document.createElement('span');
 
-                newSpan.appendChild( document.createTextNode(textArr[x]) );
-                parentElement.appendChild( newSpan, textArr[x]);
+                    newSpan.setAttribute('class', 'nerp');
+
+                    newSpan.appendChild( document.createTextNode(textArr[x]) );
+                    parentElement.appendChild( newSpan, textArr[x]);
+                }
             }
         }
 
@@ -205,14 +213,20 @@ var LetterArranger = function(lines) {
      * http://stackoverflow.com/users/515502/rahat-ahmed
      */
     this._getTextNodes = function(element) {
-        if (element.childNodes.length > 0) {
-            for (var i = 0; i < element.childNodes.length; i++) {
-                self._getTextNodes(element.childNodes[i]);
-            }
-        }
 
-        if (element.nodeType == Node.TEXT_NODE && element.nodeValue.trim() != '') {
-            self.textNodes.push(element);
+        // Don't recurse into scripts, kill 'em.
+        if (element.tagName === 'SCRIPT') {
+            element.remove();
+        } else {
+            if (element.childNodes.length > 0) {
+                for (var i = 0; i < element.childNodes.length; i++) {
+                    self._getTextNodes(element.childNodes[i]);
+                }
+            }
+
+            if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
+                self.textNodes.push(element);
+            }
         }
     };
 
@@ -310,11 +324,11 @@ var LetterArranger = function(lines) {
             self.konamiSeries = [38,38,40,40,37,39,37,39,66,65];
 
             // If the key pressed was the next in the konami series,
-            if (self.konamiSeries[self.currKonamiIndex] == key) {
+            if (self.konamiSeries[self.currKonamiIndex] === key) {
                 self.keysPressed.push(key);
                 self.currKonamiIndex+=1;
             } else {
-                if (self.konamiSeries[0] == key) {
+                if (self.konamiSeries[0] === key) {
                     self.keysPressed = [key];
                     self.currKonamiIndex = 1;
                 } else {
@@ -326,7 +340,9 @@ var LetterArranger = function(lines) {
             // Now test for a complete match:
             if (self.konamiSeries.join('-') === self.keysPressed.join('-')) {
                 self.init();
-                self.startDancing();
+                setTimeout(function(){
+                    self.startDancing();
+                }, 1000);
             }
         };
     };
@@ -341,7 +357,7 @@ $(document).ready(function(){
     var arranger = new LetterArranger(happy_face);
     arranger.konami();
 
-    // This is only for the example so I can play in the console. 
+    // This is only for the example so I can play in the console.
     window.arranger = arranger;
 });
 
