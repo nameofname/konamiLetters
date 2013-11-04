@@ -24,6 +24,10 @@ var LetterArranger = function(lines) {
 
     var self = this;
 
+    if (!lines) {
+        throw new Error('You cannot initialize the LetterArranger without an array of lines.');
+    } 
+
     this.lines = lines;
 
     // References to all of the wrapped letters on the page, and all the text nodes on the page:
@@ -41,6 +45,10 @@ var LetterArranger = function(lines) {
     this.bodyWidth = null;
     // The total letters assigned to a line: 
     this.totalLettersUsed = 0;
+    // An array of the keys pressed (to listen for the konami code):
+    this.keysPressed = [];
+    this.konamiSeries = [38,38,40,40,37,39,37,39,66,65];
+    this.currKonamiIndex = 0;
 
 
     /**
@@ -89,21 +97,21 @@ var LetterArranger = function(lines) {
             // The lines number of letters is the ratio of the lines range by the total range of all lines passed,
             // multiplied by the total number of letters in the document.
             line.numLetters = Math.floor(this.letterNum * (line.range / totalRange));
-            this.totalLettersUsed += line.numLetters; 
+            this.totalLettersUsed += line.numLetters;
         }
 
-        // Note * Since we are using Math.floor to calculate the numLetters - sometimes there will be a small remainder. 
-        // Check for this case and adjust: 
+        // Note * Since we are using Math.floor to calculate the numLetters - sometimes there will be a small remainder.
+        // Check for this case and adjust:
         if (this.letterNum !== this.totalLettersUsed) {
-            console.log(' this case'); 
+            console.log(' this case');
 
-            // Add the remainder letters to the last line: 
-            this.lines[this.lines.length - 1].numLetters += (this.letterNum - this.totalLettersUsed); 
-            this.totalLettersUsed += (this.letterNum - this.totalLettersUsed); 
+            // Add the remainder letters to the last line:
+            this.lines[this.lines.length - 1].numLetters += (this.letterNum - this.totalLettersUsed);
+            this.totalLettersUsed += (this.letterNum - this.totalLettersUsed);
         }
 
-        // Now that we have assigned all the letters to one line or another, figure out the interval for each line, 
-        // and create a plot for each line. 
+        // Now that we have assigned all the letters to one line or another, figure out the interval for each line,
+        // and create a plot for each line.
         for (var j=0; j< this.lines.length; j++) {
             var line = this.lines[j];
 
@@ -284,12 +292,45 @@ var LetterArranger = function(lines) {
         },200);
     }
 
+    /**
+     * Generate a new random RGB color.
+     */
     this._newColor = function() {
         var color = 'rgb('+ newNum()  +','+ newNum() +','+ newNum() +')';
         function newNum() {
             return Math.floor(Math.random() * 256 - 1);
         }
         return color;
+    }
+
+    this.konami = function() {
+        document.onkeydown = function(e) {
+            var key = e.which;
+
+            self.konamiSeries = [38,38,40,40,37,39,37,39,66,65];
+
+            // If the key pressed was the next in the konami series,
+            if (self.konamiSeries[self.currKonamiIndex] == key) {
+                self.keysPressed.push(key);
+                self.currKonamiIndex+=1;
+            } else {
+                if (self.konamiSeries[0] == key) {
+                    self.keysPressed = [key];
+                    self.currKonamiIndex = 1;
+                } else {
+                    self.keysPressed = [];
+                    self.currKonamiIndex = 0;
+                }
+            }
+
+            // Now test for a complete match:
+            if (self.konamiSeries.join('-') === self.keysPressed.join('-')) {
+                self.init();
+                self.startDancing();
+            }
+
+            console.log(self.keysPressed);
+        }
     }
 
     return this;
@@ -302,8 +343,7 @@ var arranger;
 $(document).ready(function(){
 
     arranger = new LetterArranger(letter_x);
-    arranger.init();
-    arranger.startDancing();
+    arranger.konami();
 
 });
 
