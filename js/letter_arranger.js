@@ -39,6 +39,9 @@ var LetterArranger = function(lines) {
     // The width and height of the body document that you are dealing with.
     this.bodyHeight = null;
     this.bodyWidth = null;
+    // The total letters assigned to a line: 
+    this.totalLettersUsed = 0;
+
 
     /**
      * Evaluate each of the passed in line descriptions, and prepare the document to be ... played with.
@@ -86,10 +89,26 @@ var LetterArranger = function(lines) {
 
             // The lines number of letters is the ratio of the lines range by the total range of all lines passed,
             // multiplied by the total number of letters in the document.
-            // TODO!!! VALIDATE THIS ASSUMPTION!
             line.numLetters = Math.floor(this.letterNum * (line.range / totalRange));
+            this.totalLettersUsed += line.numLetters; 
+        }
 
-            // Find the interval of the line based on the number of letters divided by the range:
+        // Note * Since we are using Math.floor to calculate the numLetters - sometimes there will be a small remainder. 
+        // Check for this case and adjust: 
+        if (this.letterNum !== this.totalLettersUsed) {
+            console.log(' this case'); 
+
+            // Add the remainder letters to the last line: 
+            this.lines[this.lines.length - 1].numLetters += (this.letterNum - this.totalLettersUsed); 
+            this.totalLettersUsed += (this.letterNum - this.totalLettersUsed); 
+        }
+
+        // Now that we have assigned all the letters to one line or another, figure out the interval for each line, 
+        // and create a plot for each line. 
+        for (var j=0; j< this.lines.length; j++) {
+            var line = this.lines[j];
+
+            // Find the interval of each line based on the number of letters divided by the range:
             line.interval = line.range / line.numLetters;
 
             // For each function, invoke it for it's specified range along the specified interval:
@@ -300,16 +319,6 @@ $(document).ready(function(){
                 var y = Math.sqrt(62500 - (x * x));
                 return y;
             }
-
-//        }, {
-//            xLower : -250,
-//            xUpper : 250,
-//            equation : function(x) {
-//                x = parseInt(x);
-//                var y = -1 * Math.sqrt(62500 - (x * x));
-//                return y;
-//            }
-//        }
 
         // The top and bottom of the left eye
         }, {
