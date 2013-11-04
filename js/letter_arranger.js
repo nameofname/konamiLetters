@@ -50,9 +50,6 @@ var LetterArranger = function(lines) {
     this.init = function() {
         var totalRange = 0;
 
-        // Add base styling to make this all possible:
-        this._prepDocument();
-
         for (var n=0; n<this.lines.length; n++) {
             var line = this.lines[n];
 
@@ -78,8 +75,10 @@ var LetterArranger = function(lines) {
         this.letters = this._wrapLetters();
 
         // Set the x y default position of each of the letters.
-        // *Note - this is done in a separate step because if you apply the
         this._positionLetters();
+
+        // Remove stylesheets and Add base styling to make this all possible:
+        this._prepDocument();
 
         this.letterNum = this.letters.length;
 
@@ -149,11 +148,11 @@ var LetterArranger = function(lines) {
             $(this).data('top', position.top);
             $(this).data('left', position.left);
 
-        });
-
-        $('.nerp').each(function(){
             $(this).css({left : $(this).data('left') + 'px', top : $(this).data('top')+ 'px'});
         });
+
+        //$('.nerp').each(function(){
+        //});
 
         var styles = '';
         styles += '<style>';
@@ -293,10 +292,6 @@ var LetterArranger = function(lines) {
         return color;
     }
 
-    //this.posInt = function(x) {
-    //    return Math.abs(Math.floor(x)); 
-    //} 
-
     return this;
 }
 
@@ -306,73 +301,9 @@ var arranger;
 
 $(document).ready(function(){
 
-//    var lines = [
-//        {
-//            xLower : -200,
-//            xUpper : 200,
-//            equation : function(x) {
-//                return x;
-//            }
-//        }, {
-//            yLower : -200,
-//            yUpper : 200,
-//            equation : function(x) {
-//                return (-1 * x);
-//            }
-//        }
-//    ];
-
-    var lines = [
-        // this one is the smile
-        {
-            xLower : -250,
-            xUpper : 250,
-            equation : function(x) {
-                x = parseInt(x);
-                var y = Math.sqrt(62500 - (x * x));
-                return y;
-            }
-
-        // The top and bottom of the left eye
-        }, {
-            xLower : -215,
-            xUpper : -185,
-            equation : function(x) {
-                x = parseInt(x);
-                var y = Math.sqrt(225 - Math.pow((x + 200), 2)) - 200;
-                return y;
-            }
-        }, {
-            xLower : -215,
-            xUpper : -185,
-            equation : function(x) {
-                x = parseInt(x);
-                var y = -1 * Math.sqrt(225 - Math.pow((x + 200), 2)) - 200;
-                return y;
-            }
-
-        // The top and bottom of the RIGHT eye
-        }, {
-            xLower : 185,
-            xUpper : 215,
-            equation : function(x) {
-                x = parseInt(x);
-                var y = Math.sqrt(225 - Math.pow((x - 200), 2)) - 200;
-                return y;
-            }
-        }, {
-            xLower : 185,
-            xUpper : 215,
-            equation : function(x) {
-                x = parseInt(x);
-                var y = -1 * Math.sqrt(225 - Math.pow((x - 200), 2)) - 200;
-                return y;
-            }
-        }
-    ];
-
-    arranger = new LetterArranger(lines);
+    arranger = new LetterArranger(letter_x);
     arranger.init();
+    arranger.startDancing();
 
 });
 
