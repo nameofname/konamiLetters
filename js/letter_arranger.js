@@ -337,12 +337,9 @@ var LetterArranger = function(lines) {
 }
 
 
-
-var arranger;
-
 $(document).ready(function(){
 
-    arranger = new LetterArranger(letter_x);
+    arranger = new LetterArranger(happy_face);
     arranger.konami();
 
 });
