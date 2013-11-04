@@ -103,7 +103,6 @@ var LetterArranger = function(lines) {
         // Note * Since we are using Math.floor to calculate the numLetters - sometimes there will be a small remainder.
         // Check for this case and adjust:
         if (this.letterNum !== this.totalLettersUsed) {
-            console.log(' this case');
 
             // Add the remainder letters to the last line:
             this.lines[this.lines.length - 1].numLetters += (this.letterNum - this.totalLettersUsed);
@@ -328,8 +327,6 @@ var LetterArranger = function(lines) {
                 self.init();
                 self.startDancing();
             }
-
-            console.log(self.keysPressed);
         }
     }
 
