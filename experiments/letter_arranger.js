@@ -68,7 +68,7 @@ var LetterArranger = function(lines) {
             } else if (line.hasOwnProperty('yLower') && line.hasOwnProperty('yUpper')) {
                 line.range = line.yUpper - line.yLower;
 
-            // If the line has no bounds, then throw an error.
+                // If the line has no bounds, then throw an error.
             } else {
                 throw new Error('You must include either x or y boundaries for each line configuration passed');
             }
@@ -134,7 +134,6 @@ var LetterArranger = function(lines) {
         styles += '<style>';
         styles += 'html { min-height: 100%;}';
         styles += 'body { position : absolute; min-width : 100%; min-height: 100%;}';
-        styles += 'div { transition: visibility: 5s;}';
         styles += '</style>';
 
         var style = $(styles);
@@ -163,7 +162,7 @@ var LetterArranger = function(lines) {
 
         var styles = '';
         styles += '<style>';
-        styles += '.nerp { position: absolute; transition: top 20s, left 20s, font-size 20s; transform: translate3d(0,0,0); }';
+        styles += '.nerp { position: absolute; } ';
         styles += '</style>';
 
         var style = $(styles);
@@ -266,49 +265,45 @@ var LetterArranger = function(lines) {
     /**
      * Stop the dance.
      */
-    this.stop = function() {
+    this.stopDancing = function() {
         clearInterval(this.interval);
     };
 
     /**
-     * Start moving the letters on the page according to CSS transitions, then according to an interval which will
-     * flash all the letters different colors.
+     * Makes all the letters on the page dance moving closer to their coordinates:
      */
-    this.startMoving = function() {
+    this.startDancing = function() {
 
-        var letters = self.letters;
-        for (var i=0; i<letters.length; i++) {
-            var letter = letters[i];
+        this.interval = setInterval(function(){
+            var letters = self.letters;
 
-            letter.style.left= letters[i].plotPoint[0] + 'px';
-            letter.style.top = letters[i].plotPoint[1] + 'px';
-            letter.style.fontSize = '20px';
+            for (var i=0; i<letters.length; i++) {
 
-//            letter.addEventListener('webkitTransitionEnd', function(){
-//                letter.style.fontSize = '100px';
-//            }, true);
-        }
+                var letter = letters[i],
+                    currX, currY, targetX, targetY, newX, newY;
 
-        setTimeout(function(){
+                currX = parseInt(letter.style.left.split('px')[0]);
+                currY = parseInt(letter.style.top.split('px')[0]);
+                targetX = parseInt(letter.plotPoint[0]);
+                targetY = parseInt(letter.plotPoint[1]);
 
-            // Increase the font size (this is a transition as stated above)
-            for (var j=0; j<letters.length; j++) {
-                var letter = letters[j];
-                letter.style.fontSize = '100px';
-            }
-
-            // Set an interval to flash a different color every half second.
-            self.interval = setInterval(function(){
-
-                for (var k=0; k<letters.length; k++) {
-                    var letter = letters[k];
-                    letter.style.color = self._newColor();
+                if (Math.abs(currX - targetX) <= 10) {
+                    newX = currX <= targetX ? (currX + 2) : (currX - 2);
+                } else {
+                    newX = currX <= targetX ? (currX + 10) : (currX - 10);
                 }
 
-            }, 500);
+                if (Math.abs(currY - targetY) <= 10) {
+                    newY = currY <= targetY ? (currY + 2) : (currY - 2);
+                } else {
+                    newY = currY <= targetY ? (currY + 10) : (currY - 10);
+                }
 
-        }, 20000);
-
+                letter.style.color = self._newColor();
+                letter.style.top = newY+'px';
+                letter.style.left = newX+'px';
+            }
+        },200);
     };
 
     /**
@@ -346,9 +341,8 @@ var LetterArranger = function(lines) {
             if (self.konamiSeries.join('-') === self.keysPressed.join('-')) {
                 self.init();
                 setTimeout(function(){
-                    self.startMoving();
+                    self.startDancing();
                 }, 1000);
-                self.startMoving();
             }
         };
     };
