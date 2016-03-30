@@ -1,6 +1,3 @@
-"use strict";
-
-
 /**
  * Takes an array of line objects. Each line must have an upper and lower bound (for x OR y) and a function that
  * describes the relationship between x and y.
@@ -24,6 +21,7 @@
  * @param lines
  */
 var LetterArranger = function(lines) {
+    "use strict";
 
     var self = this;
 
@@ -48,6 +46,10 @@ var LetterArranger = function(lines) {
     this.bodyWidth = null;
     // The total letters assigned to a line: 
     this.totalLettersUsed = 0;
+    // An array of the keys pressed (to listen for the konami code):
+    this.keysPressed = [];
+    this.konamiSeries = [38,38,40,40,37,39,37,39,66,65];
+    this.currKonamiIndex = 0;
 
 
     /**
@@ -315,12 +317,44 @@ var LetterArranger = function(lines) {
     this._newColor = function() {
         var color = 'rgb('+ newNum()  +','+ newNum() +','+ newNum() +')';
         function newNum() {
-            return Math.floor(Math.random() * 256 - 1);
+            return Math.floor(Math.random() * 256);
         }
         return color;
+    };
+
+    this.konami = function() {
+        document.onkeydown = function(e) {
+            var key = e.which;
+
+            self.konamiSeries = [38,38,40,40,37,39,37,39,66,65];
+
+            // If the key pressed was the next in the konami series,
+            if (self.konamiSeries[self.currKonamiIndex] === key) {
+                self.keysPressed.push(key);
+                self.currKonamiIndex+=1;
+            } else {
+                if (self.konamiSeries[0] === key) {
+                    self.keysPressed = [key];
+                    self.currKonamiIndex = 1;
+                } else {
+                    self.keysPressed = [];
+                    self.currKonamiIndex = 0;
+                }
+            }
+
+            // Now test for a complete match:
+            if (self.konamiSeries.join('-') === self.keysPressed.join('-')) {
+                self.init();
+                setTimeout(function(){
+                    self.startMoving();
+                }, 1000);
+                self.startMoving();
+            }
+        };
     };
 
     return this;
 };
 
 
+module.exports = LetterArranger;
