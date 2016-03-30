@@ -44,3 +44,4 @@ const keyTracker = (keyArray, callback) => {
     };
 };
 
+module.exports = keyTracker;

@@ -4,7 +4,7 @@ var LetterArranger = require('./letterArranger');
 var keyTracker = require('./keyTracker');
 
 
-$(document).ready(function(){
+$(document).ready(function () {
     "use strict";
 
     var arranger = new LetterArranger(happy_face);

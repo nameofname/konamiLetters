@@ -65,6 +65,8 @@ const keyTracker = (keyArray, callback) => {
         //}
     };
 };
+
+module.exports = keyTracker;
 },{}],3:[function(require,module,exports){
 /**
  * Takes an array of line objects. Each line must have an upper and lower bound (for x OR y) and a function that
