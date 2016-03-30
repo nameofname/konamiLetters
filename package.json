@@ -15,7 +15,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "build": "babel js/modules -d lib && browserify lib/entry.js > konamiLetters.js"
+    "build": "babel src -d lib && browserify lib/entry.js > konamiLetters.js"
   },
   "repository": {
     "type": "git",
