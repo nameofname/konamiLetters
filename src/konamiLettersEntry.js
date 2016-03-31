@@ -3,7 +3,7 @@
 
 var letterArranger = require('./letterArranger');
 var keyTracker = require('./keyTracker');
-var happy_face = require('../patterns/happy_face');
+var happy_face = require('./patterns/happy_face');
 
 
 /**

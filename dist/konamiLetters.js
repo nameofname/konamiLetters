@@ -368,6 +368,8 @@ module.exports = function (pattern) {
     _init();
     startMoving();};
 },{}],4:[function(require,module,exports){
+"use strict";
+
 var happy_face = [
     // this one is the smile
     {

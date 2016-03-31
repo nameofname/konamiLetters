@@ -1,3 +1,5 @@
+"use strict";
+
 var letter_x = [
     {
         xLower : -200,

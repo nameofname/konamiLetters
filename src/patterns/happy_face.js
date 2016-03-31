@@ -1,3 +1,5 @@
+"use strict";
+
 var happy_face = [
     // this one is the smile
     {
