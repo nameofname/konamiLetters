@@ -9,20 +9,17 @@ let currIndex = 0;
 const keyTracker = (keyArray, callback) => {
     document.onkeydown = function(e) {
         const key = e.which;
-
         keyArray = keyArray || defaultSeries;
 
-        // If the key pressed was the next in the series, push it to the array of pressed letters :
         if (keyArray[currIndex] === key) {
+            // If the key pressed was the next in the series, push it to the array of pressed letters :
             keysPressed.push(key);
             currIndex+=1;
 
-            // if the key pressed does not match the current, then start over :
         } else {
-
+            // if the key pressed does not match the current, then start over :
             keysPressed = [];
             currIndex = 0;
-
             if (keyArray[0] === key) {
                 keysPressed.push(key);
                 currIndex+=1;
@@ -30,17 +27,7 @@ const keyTracker = (keyArray, callback) => {
         }
 
         // Now test for a complete match:
-        if (keysPressed.length === keyArray.length) {
-            callback();
-        }
-
-        //if (keyArray.join('-') === keysPressed.join('-')) {
-        //    self.init();
-        //    setTimeout(function(){
-        //        self.startMoving();
-        //    }, 1000);
-        //    self.startMoving();
-        //}
+        if (keysPressed.length === keyArray.length) { callback(); }
     };
 };
 

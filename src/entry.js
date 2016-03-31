@@ -1,11 +1,11 @@
 "use strict";
 
+
 var LetterArranger = require('./letterArranger');
 var keyTracker = require('./keyTracker');
 
 
 $(document).ready(function () {
-    "use strict";
 
     var arranger = new LetterArranger(happy_face);
     keyTracker(undefined, function () {
@@ -16,7 +16,5 @@ $(document).ready(function () {
         arranger.startMoving();
     });
 
-    // This is only for the example so I can play in the console.
-    window.arranger = arranger;
 });
 
