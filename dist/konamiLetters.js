@@ -1,103 +1,95 @@
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
+
 var LetterArranger = require('./letterArranger');
 var keyTracker = require('./keyTracker');
+var happy_face = require('../patterns/happy_face');
 
-$(document).ready(function () {
-    "use strict";
 
-    var arranger = new LetterArranger(happy_face);
-    keyTracker(undefined, function () {
-        arranger.init();
-        setTimeout(function () {
-            arranger.startMoving();
-        }, 1000);
-        arranger.startMoving();
-    });
+/**
+ * a function that calls the letter arranger, defaults to the konami code as the key array and the happy face as the
+ * pattern.
+ * @param keyArr <array> an array of key character codes
+ * @param pattern <array> an object describing the pattern to draw
+ * @param callback <function> executes on completion synchronously
+ */
+module.exports = function (keyArr, pattern, callback) {
+    pattern = pattern || happy_face;
+    var arranger = new LetterArranger(pattern);
+    keyTracker(keyArr, function () {
+        arranger.
+        init().
+        startMoving();
 
-    // This is only for the example so I can play in the console.
-    window.arranger = arranger;
-});
-},{"./keyTracker":2,"./letterArranger":3}],2:[function(require,module,exports){
+        if (callback instanceof Function) {
+            callback();}});};
+},{"../patterns/happy_face":4,"./keyTracker":2,"./letterArranger":3}],2:[function(require,module,exports){
 "use strict";
 
 // Key array defaults to the konami code :
-const defaultSeries = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+var defaultSeries = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
 // An array of the keys pressed (to listen for the konami code):
-let keysPressed = [];
-let currIndex = 0;
+var keysPressed = [];
+var currIndex = 0;
 
-const keyTracker = (keyArray, callback) => {
+var keyTracker = function keyTracker(keyArray, callback) {
     document.onkeydown = function (e) {
-        const key = e.which;
-
+        var key = e.which;
         keyArray = keyArray || defaultSeries;
 
-        // If the key pressed was the next in the series, push it to the array of pressed letters :
         if (keyArray[currIndex] === key) {
+            // If the key pressed was the next in the series, push it to the array of pressed letters :
             keysPressed.push(key);
-            currIndex += 1;
+            currIndex += 1;} else 
 
+        {
             // if the key pressed does not match the current, then start over :
-        } else {
+            keysPressed = [];
+            currIndex = 0;
+            if (keyArray[0] === key) {
+                keysPressed.push(key);
+                currIndex += 1;}}
 
-                keysPressed = [];
-                currIndex = 0;
 
-                if (keyArray[0] === key) {
-                    keysPressed.push(key);
-                    currIndex += 1;
-                }
-            }
 
         // Now test for a complete match:
-        if (keysPressed.length === keyArray.length) {
-            callback();
-        }
+        if (keysPressed.length === keyArray.length) {callback();}};};
 
-        //if (keyArray.join('-') === keysPressed.join('-')) {
-        //    self.init();
-        //    setTimeout(function(){
-        //        self.startMoving();
-        //    }, 1000);
-        //    self.startMoving();
-        //}
-    };
-};
+
 
 module.exports = keyTracker;
 },{}],3:[function(require,module,exports){
-/**
- * Takes an array of line objects. Each line must have an upper and lower bound (for x OR y) and a function that
- * describes the relationship between x and y.
- *
- * Here are some examples of line configurations:
- *      {
- *          xLower : -10,
- *          xUpper : 10,
- *          equation : function (x) { return x + 1}
- *      }, {
- *          yLower : -20,
- *          yUpper : 20,
- *          equation : function (x) { return x + 1}
- *      }
- *
- * Note* A line configuration cannot have both x and y boundaries.
- *
- * Using the public methods of the letter arranger, you will be able to re-arrange all the letters on the page to match
- * the lines you describe.
- *
- * @param lines
- */
-var LetterArranger = function (lines) {
+'use strict'; /**
+               * Takes an array of line objects. Each line must have an upper and lower bound (for x OR y) and a function that
+               * describes the relationship between x and y.
+               *
+               * Here are some examples of line configurations:
+               *      {
+               *          xLower : -10,
+               *          xUpper : 10,
+               *          equation : function (x) { return x + 1}
+               *      }, {
+               *          yLower : -20,
+               *          yUpper : 20,
+               *          equation : function (x) { return x + 1}
+               *      }
+               *
+               * Note* A line configuration cannot have both x and y boundaries.
+               *
+               * Using the public methods of the letter arranger, you will be able to re-arrange all the letters on the page to match
+               * the lines you describe.
+               *
+               * @param lines
+               */
+var LetterArranger = function LetterArranger(lines) {
     "use strict";
 
     var self = this;
 
     if (!lines) {
-        throw new Error('You cannot initialize the LetterArranger without an array of lines.');
-    }
+        throw new Error('You cannot initialize the LetterArranger without an array of lines.');}
+
 
     this.lines = lines;
 
@@ -114,12 +106,13 @@ var LetterArranger = function (lines) {
     // The width and height of the body document that you are dealing with.
     this.bodyHeight = null;
     this.bodyWidth = null;
-    // The total letters assigned to a line:
+    // The total letters assigned to a line: 
     this.totalLettersUsed = 0;
     // An array of the keys pressed (to listen for the konami code):
     this.keysPressed = [];
     this.konamiSeries = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
     this.currKonamiIndex = 0;
+
 
     /**
      * Evaluate each of the passed in line descriptions, and prepare the document to be ... played with.
@@ -133,21 +126,21 @@ var LetterArranger = function (lines) {
 
             // First get the range of the line based on either the x or y boundaries:
             if (line.hasOwnProperty('xLower') && line.hasOwnProperty('xUpper')) {
-                line.range = line.xUpper - line.xLower;
-            } else if (line.hasOwnProperty('yLower') && line.hasOwnProperty('yUpper')) {
+                line.range = line.xUpper - line.xLower;} else 
+            if (line.hasOwnProperty('yLower') && line.hasOwnProperty('yUpper')) {
                 line.range = line.yUpper - line.yLower;
 
                 // If the line has no bounds, then throw an error.
             } else {
-                    throw new Error('You must include either x or y boundaries for each line configuration passed');
-                }
+                    throw new Error('You must include either x or y boundaries for each line configuration passed');}
+
 
             // Add a plot attribute to each line:
             this.lines[n].plot = [];
 
             // Add up the total range of all of the lines:
-            totalRange += this.lines[n].range;
-        }
+            totalRange += this.lines[n].range;}
+
 
         // Wrap all the letters in a span tag and get the returned list.
         this.letters = this._wrapLetters();
@@ -167,8 +160,8 @@ var LetterArranger = function (lines) {
             // The lines number of letters is the ratio of the lines range by the total range of all lines passed,
             // multiplied by the total number of letters in the document.
             linea.numLetters = Math.floor(this.letterNum * (linea.range / totalRange));
-            this.totalLettersUsed += linea.numLetters;
-        }
+            this.totalLettersUsed += linea.numLetters;}
+
 
         // Note * Since we are using Math.floor to calculate the numLetters - sometimes there will be a small remainder.
         // Check for this case and adjust:
@@ -176,8 +169,8 @@ var LetterArranger = function (lines) {
 
             // Add the remainder letters to the last line:
             this.lines[this.lines.length - 1].numLetters += this.letterNum - this.totalLettersUsed;
-            this.totalLettersUsed += this.letterNum - this.totalLettersUsed;
-        }
+            this.totalLettersUsed += this.letterNum - this.totalLettersUsed;}
+
 
         // Now that we have assigned all the letters to one line or another, figure out the interval for each line,
         // and create a plot for each line.
@@ -188,9 +181,11 @@ var LetterArranger = function (lines) {
             lineb.interval = lineb.range / lineb.numLetters;
 
             // For each function, invoke it for it's specified range along the specified interval:
-            this._createPlot(lineb);
-        }
-    };
+            this._createPlot(lineb);}
+
+
+        return this;};
+
 
     /**
      * Preps the document to be manipulated. Removes all stylesheets and adds some base styling:
@@ -213,8 +208,8 @@ var LetterArranger = function (lines) {
         var height = document.getElementsByTagName('body')[0].offsetHeight;
 
         this.bodyHeight = height;
-        this.bodyWidth = width;
-    };
+        this.bodyWidth = width;};
+
 
     /**
      * @private
@@ -227,8 +222,8 @@ var LetterArranger = function (lines) {
             $(this).data('top', position.top);
             $(this).data('left', position.left);
 
-            $(this).css({ left: $(this).data('left') + 'px', top: $(this).data('top') + 'px' });
-        });
+            $(this).css({ left: $(this).data('left') + 'px', top: $(this).data('top') + 'px' });});
+
 
         var styles = '';
         styles += '<style>';
@@ -241,8 +236,9 @@ var LetterArranger = function (lines) {
         // Now select all of the .nerp elements on the page, and remove them temporarily:
         var $nerps = $('.nerp').detach();
         $('body').empty();
-        $('body').append($nerps);
-    };
+        $('body').append($nerps);};
+
+
 
     /**
      * Wrap each of the letters on the page in a span tag, and return a DOM reference to the letters on the page.
@@ -253,8 +249,8 @@ var LetterArranger = function (lines) {
         var nodeList = this.textNodes;
 
         for (var i = 0; i < nodeList.length; i++) {
-            var textArr = nodeList[i].nodeValue.split(''),
-                parentElement = nodeList[i].parentElement;
+            var textArr = nodeList[i].nodeValue.split(''), 
+            parentElement = nodeList[i].parentElement;
 
             parentElement.removeChild(nodeList[i]);
             for (var x = 0; x < textArr.length; x++) {
@@ -267,13 +263,14 @@ var LetterArranger = function (lines) {
                     newSpan.setAttribute('class', 'nerp');
 
                     newSpan.appendChild(document.createTextNode(textArr[x]));
-                    parentElement.appendChild(newSpan, textArr[x]);
-                }
-            }
-        }
+                    parentElement.appendChild(newSpan, textArr[x]);}}}
 
-        return document.getElementsByClassName('nerp');
-    };
+
+
+
+        return document.getElementsByClassName('nerp');};
+
+
 
     /**
      * Via StackOverflow.
@@ -284,19 +281,19 @@ var LetterArranger = function (lines) {
 
         // Don't recurse into scripts, kill 'em.
         if (element.tagName === 'SCRIPT') {
-            element.remove();
-        } else {
+            element.remove();} else 
+        {
             if (element.childNodes.length > 0) {
                 for (var i = 0; i < element.childNodes.length; i++) {
-                    self._getTextNodes(element.childNodes[i]);
-                }
-            }
+                    self._getTextNodes(element.childNodes[i]);}}
+
+
 
             if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
-                self.textNodes.push(element);
-            }
-        }
-    };
+                self.textNodes.push(element);}}};
+
+
+
 
     /**
      * Creates the (x,y) coordinates for each of the letters in a given line based on the passed line configurations,
@@ -306,36 +303,36 @@ var LetterArranger = function (lines) {
      * @private
      */
     this._createPlot = function (line) {
-        var numLetters = line.numLetters,
-            interval = line.interval,
-            lower = line.hasOwnProperty('xLower') ? line.xLower : line.yLower,
-            equation = line.equation;
+        var numLetters = line.numLetters, 
+        interval = line.interval, 
+        lower = line.hasOwnProperty('xLower') ? line.xLower : line.yLower, 
+        equation = line.equation;
 
         // Now plot the points on the line based on the lower bound and the interval:
         for (var x = 0; x < numLetters; x++) {
-            var x1 = lower + x * interval,
-                y = equation(x1),
-
+            var x1 = lower + x * interval, 
+            y = equation(x1), 
 
             // now find the coordinates relative to the width of the document, expecting that 0 is the midline of the
             // document on both the x and y axis
-            relativeX = x1 + this.bodyWidth / 2,
-                relativeY = y + this.bodyHeight / 2;
+            relativeX = x1 + this.bodyWidth / 2, 
+            relativeY = y + this.bodyHeight / 2;
 
             var coordinates = [relativeX, relativeY];
             line.plot.push(coordinates);
 
             this.letters[this.assignmentOffset].plotPoint = coordinates;
-            this.assignmentOffset++;
-        }
-    };
+            this.assignmentOffset++;}};
+
+
+
 
     /**
      * Stop the dance.
      */
     this.stop = function () {
-        clearInterval(this.interval);
-    };
+        clearInterval(this.interval);};
+
 
     /**
      * Start moving the letters on the page according to CSS transitions, then according to an interval which will
@@ -361,19 +358,22 @@ var LetterArranger = function (lines) {
             // Increase the font size (this is a transition as stated above)
             for (var j = 0; j < letters.length; j++) {
                 var letter = letters[j];
-                letter.style.fontSize = '100px';
-            }
+                letter.style.fontSize = '100px';}
+
 
             // Set an interval to flash a different color every half second.
             self.interval = setInterval(function () {
 
                 for (var k = 0; k < letters.length; k++) {
                     var letter = letters[k];
-                    letter.style.color = self._newColor();
-                }
-            }, 500);
-        }, 20000);
-    };
+                    letter.style.color = self._newColor();}}, 
+
+
+            500);}, 
+
+        20000);};
+
+
 
     /**
      * Generate a new random RGB color.
@@ -381,10 +381,10 @@ var LetterArranger = function (lines) {
     this._newColor = function () {
         var color = 'rgb(' + newNum() + ',' + newNum() + ',' + newNum() + ')';
         function newNum() {
-            return Math.floor(Math.random() * 256);
-        }
-        return color;
-    };
+            return Math.floor(Math.random() * 256);}
+
+        return color;};
+
 
     this.konami = function () {
         document.onkeydown = function (e) {
@@ -395,31 +395,83 @@ var LetterArranger = function (lines) {
             // If the key pressed was the next in the konami series,
             if (self.konamiSeries[self.currKonamiIndex] === key) {
                 self.keysPressed.push(key);
-                self.currKonamiIndex += 1;
-            } else {
+                self.currKonamiIndex += 1;} else 
+            {
                 if (self.konamiSeries[0] === key) {
                     self.keysPressed = [key];
-                    self.currKonamiIndex = 1;
-                } else {
+                    self.currKonamiIndex = 1;} else 
+                {
                     self.keysPressed = [];
-                    self.currKonamiIndex = 0;
-                }
-            }
+                    self.currKonamiIndex = 0;}}
+
+
 
             // Now test for a complete match:
             if (self.konamiSeries.join('-') === self.keysPressed.join('-')) {
                 self.init();
                 setTimeout(function () {
-                    self.startMoving();
-                }, 1000);
-                self.startMoving();
-            }
-        };
-    };
+                    self.startMoving();}, 
+                1000);
+                self.startMoving();}};};
 
-    return this;
-};
+
+
+
+    return this;};
+
+
 
 module.exports = LetterArranger;
+},{}],4:[function(require,module,exports){
+var happy_face = [
+    // this one is the smile
+    {
+        xLower : -250,
+        xUpper : 250,
+        equation : function(x) {
+            x = parseInt(x);
+            var y = Math.sqrt(62500 - (x * x));
+            return y;
+        }
+
+    // The top and bottom of the left eye
+    }, {
+        xLower : -215,
+        xUpper : -185,
+        equation : function(x) {
+            x = parseInt(x);
+            var y = Math.sqrt(225 - Math.pow((x + 200), 2)) - 200;
+            return y;
+        }
+    }, {
+        xLower : -215,
+        xUpper : -185,
+        equation : function(x) {
+            x = parseInt(x);
+            var y = -1 * Math.sqrt(225 - Math.pow((x + 200), 2)) - 200;
+            return y;
+        }
+
+    // The top and bottom of the RIGHT eye
+    }, {
+        xLower : 185,
+        xUpper : 215,
+        equation : function(x) {
+            x = parseInt(x);
+            var y = Math.sqrt(225 - Math.pow((x - 200), 2)) - 200;
+            return y;
+        }
+    }, {
+        xLower : 185,
+        xUpper : 215,
+        equation : function(x) {
+            x = parseInt(x);
+            var y = -1 * Math.sqrt(225 - Math.pow((x - 200), 2)) - 200;
+            return y;
+        }
+    }
+];
+
+
 },{}]},{},[1])
 ;

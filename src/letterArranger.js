@@ -121,6 +121,8 @@ var LetterArranger = function(lines) {
             // For each function, invoke it for it's specified range along the specified interval:
             this._createPlot(lineb);
         }
+
+        return this;
     };
 
     /**
