@@ -1,30 +1,4 @@
-;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";
-
-
-var LetterArranger = require('./letterArranger');
-var keyTracker = require('./keyTracker');
-var happy_face = require('../patterns/happy_face');
-
-
-/**
- * a function that calls the letter arranger, defaults to the konami code as the key array and the happy face as the
- * pattern.
- * @param keyArr <array> an array of key character codes
- * @param pattern <array> an object describing the pattern to draw
- * @param callback <function> executes on completion synchronously
- */
-module.exports = function (keyArr, pattern, callback) {
-    pattern = pattern || happy_face;
-    var arranger = new LetterArranger(pattern);
-    keyTracker(keyArr, function () {
-        arranger.
-        init().
-        startMoving();
-
-        if (callback instanceof Function) {
-            callback();}});};
-},{"../patterns/happy_face":4,"./keyTracker":2,"./letterArranger":3}],2:[function(require,module,exports){
+!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.konamiLetters=e():"undefined"!=typeof global?global.konamiLetters=e():"undefined"!=typeof self&&(self.konamiLetters=e())}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
 // Key array defaults to the konami code :
@@ -59,7 +33,33 @@ var keyTracker = function keyTracker(keyArray, callback) {
 
 
 module.exports = keyTracker;
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
+"use strict";
+
+
+var LetterArranger = require('./letterArranger');
+var keyTracker = require('./keyTracker');
+var happy_face = require('../patterns/happy_face');
+
+
+/**
+ * a function that calls the letter arranger, defaults to the konami code as the key array and the happy face as the
+ * pattern.
+ * @param keyArr <array> an array of key character codes
+ * @param pattern <array> an object describing the pattern to draw
+ * @param callback <function> executes on completion synchronously
+ */
+module.exports = function (keyArr, pattern, callback) {
+    pattern = pattern || happy_face;
+    var arranger = new LetterArranger(pattern);
+    keyTracker(keyArr, function () {
+        arranger.
+        init().
+        startMoving();
+
+        if (callback instanceof Function) {
+            callback();}});};
+},{"../patterns/happy_face":4,"./keyTracker":1,"./letterArranger":3}],3:[function(require,module,exports){
 'use strict'; /**
                * Takes an array of line objects. Each line must have an upper and lower bound (for x OR y) and a function that
                * describes the relationship between x and y.
@@ -473,5 +473,7 @@ var happy_face = [
 ];
 
 
-},{}]},{},[1])
+},{}]},{},[2])
+(2)
+});
 ;
