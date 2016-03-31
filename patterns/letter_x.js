@@ -13,3 +13,5 @@ var letter_x = [
         }
     }
 ];
+
+module.exports = letter_x;

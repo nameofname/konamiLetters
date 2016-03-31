@@ -1,7 +1,7 @@
 "use strict";
 
 
-var LetterArranger = require('./letterArranger');
+var letterArranger = require('./letterArranger');
 var keyTracker = require('./keyTracker');
 var happy_face = require('../patterns/happy_face');
 
@@ -15,12 +15,8 @@ var happy_face = require('../patterns/happy_face');
  */
 module.exports = function (keyArr, pattern, callback) {
     pattern = pattern || happy_face;
-    var arranger = new LetterArranger(pattern);
     keyTracker(keyArr, function () {
-        arranger
-            .init()
-            .startMoving();
-
+        letterArranger(pattern);
         if (callback instanceof Function) {
             callback();
         }

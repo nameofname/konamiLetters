@@ -47,3 +47,4 @@ var happy_face = [
     }
 ];
 
+module.exports = happy_face;
