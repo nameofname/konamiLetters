@@ -5,8 +5,8 @@ A konami code script that re-arranges the letters on your page to do ... somethi
 
 TODO ::: 
 ----
-- use babel and break up script into modules
-- make the array of characters pluggable. 
+XXX- use babel and break up script into modules
+XXX- make the array of characters pluggable.
 - stop using jquery 
 - create a pattern that will work for Danielle. ie. a monster face. 
 - try to 'freeze' the letters on the page before moving things around. 

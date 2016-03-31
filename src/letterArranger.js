@@ -294,7 +294,7 @@ const startMoving = function() {
             letters[k].style.color = _newColor();
         }
 
-    }, 2000); // TODO !!! determine whether 2 seconds is the proper timeout.
+    }, 5000); // TODO !!! determine whether 5 seconds is the proper timeout.
 
 };
 
