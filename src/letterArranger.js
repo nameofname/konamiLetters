@@ -28,13 +28,11 @@ let lines; // a reference to the pattern passed to the entry function.
 let letters = []; // References to all of the wrapped letters on the page, and all the text nodes on the page:
 const textNodes = [];
 let letterNum = null; // The number of letters on the page:
-// The offset for the current letter being assigned a point - starting at 0 and used as a place holder for when
-// iterating through all the letters on the page.
 let interval = null; // an interval for updating the color which can be stopped.
 let bodyHeight = null; // The width and height of the body document that you are dealing with.
 let bodyWidth = null;
 let totalLettersUsed = 0; // The total letters assigned to a line:
-
+let assignmentOffset = 0; // Place holder used to iterate over all the letters on the page.
 
 // Generate a new random RGB color.
 const newNum = () => {
@@ -44,7 +42,6 @@ const _newColor = function() {
     const color = 'rgb('+ newNum()  +','+ newNum() +','+ newNum() +')';
     return color;
 };
-
 
 
 /**
@@ -258,8 +255,9 @@ const _createPlot = function(line) {
         var coordinates = [relativeX,relativeY];
         line.plot.push(coordinates);
 
-        letters[x].plotPoint = coordinates;
-        //assignmentOffset++;
+        // use assignmentOffset so your place is held as _createPlot gets called on subsequent lines
+        letters[assignmentOffset].plotPoint = coordinates;
+        assignmentOffset++;
     }
 };
 
@@ -296,7 +294,7 @@ const startMoving = function() {
             letters[k].style.color = _newColor();
         }
 
-    }, 50000); // TODO !!! determine whether 2 seconds is the proper timeout.
+    }, 2000); // TODO !!! determine whether 2 seconds is the proper timeout.
 
 };
 

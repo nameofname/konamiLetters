@@ -39,7 +39,7 @@ module.exports = keyTracker;
 
 var letterArranger = require('./letterArranger');
 var keyTracker = require('./keyTracker');
-var happy_face = require('../patterns/happy_face');
+var happy_face = require('./patterns/happy_face');
 
 
 /**
@@ -55,7 +55,7 @@ module.exports = function (keyArr, pattern, callback) {
         letterArranger(pattern);
         if (callback instanceof Function) {
             callback();}});};
-},{"../patterns/happy_face":4,"./keyTracker":1,"./letterArranger":3}],3:[function(require,module,exports){
+},{"./keyTracker":1,"./letterArranger":3,"./patterns/happy_face":4}],3:[function(require,module,exports){
 "use strict";
 
 /**
@@ -86,13 +86,11 @@ var lines = void 0; // a reference to the pattern passed to the entry function.
 var letters = []; // References to all of the wrapped letters on the page, and all the text nodes on the page:
 var textNodes = [];
 var letterNum = null; // The number of letters on the page:
-// The offset for the current letter being assigned a point - starting at 0 and used as a place holder for when
-// iterating through all the letters on the page.
 var interval = null; // an interval for updating the color which can be stopped.
 var bodyHeight = null; // The width and height of the body document that you are dealing with.
 var bodyWidth = null;
 var totalLettersUsed = 0; // The total letters assigned to a line:
-
+var assignmentOffset = 0; // Place holder used to iterate over all the letters on the page.
 
 // Generate a new random RGB color.
 var newNum = function newNum() {
@@ -101,7 +99,6 @@ var newNum = function newNum() {
 var _newColor = function _newColor() {
     var color = 'rgb(' + newNum() + ',' + newNum() + ',' + newNum() + ')';
     return color;};
-
 
 
 
@@ -316,9 +313,10 @@ var _createPlot = function _createPlot(line) {
         var coordinates = [relativeX, relativeY];
         line.plot.push(coordinates);
 
-        letters[x].plotPoint = coordinates;
-        //assignmentOffset++;
-    }};
+        // use assignmentOffset so your place is held as _createPlot gets called on subsequent lines
+        letters[assignmentOffset].plotPoint = coordinates;
+        assignmentOffset++;}};
+
 
 
 
@@ -354,7 +352,7 @@ var startMoving = function startMoving() {
             letters[k].style.color = _newColor();}}, 
 
 
-    50000); // TODO !!! determine whether 2 seconds is the proper timeout.
+    2000); // TODO !!! determine whether 2 seconds is the proper timeout.
 };
 
 
@@ -371,56 +369,55 @@ module.exports = function (pattern) {
 "use strict";
 
 var happy_face = [
-    // this one is the smile
-    {
-        xLower : -250,
-        xUpper : 250,
-        equation : function(x) {
-            x = parseInt(x);
-            var y = Math.sqrt(62500 - (x * x));
-            return y;
-        }
+// this one is the smile
+{ 
+    xLower: -250, 
+    xUpper: 250, 
+    equation: function equation(x) {
+        x = parseInt(x);
+        var y = Math.sqrt(62500 - x * x);
+        return y;}
+
 
     // The top and bottom of the left eye
-    }, {
-        xLower : -215,
-        xUpper : -185,
-        equation : function(x) {
-            x = parseInt(x);
-            var y = Math.sqrt(225 - Math.pow((x + 200), 2)) - 200;
-            return y;
-        }
-    }, {
-        xLower : -215,
-        xUpper : -185,
-        equation : function(x) {
-            x = parseInt(x);
-            var y = -1 * Math.sqrt(225 - Math.pow((x + 200), 2)) - 200;
-            return y;
-        }
+}, { 
+    xLower: -215, 
+    xUpper: -185, 
+    equation: function equation(x) {
+        x = parseInt(x);
+        var y = Math.sqrt(225 - Math.pow(x + 200, 2)) - 200;
+        return y;} }, 
+
+{ 
+    xLower: -215, 
+    xUpper: -185, 
+    equation: function equation(x) {
+        x = parseInt(x);
+        var y = -1 * Math.sqrt(225 - Math.pow(x + 200, 2)) - 200;
+        return y;}
+
 
     // The top and bottom of the RIGHT eye
-    }, {
-        xLower : 185,
-        xUpper : 215,
-        equation : function(x) {
-            x = parseInt(x);
-            var y = Math.sqrt(225 - Math.pow((x - 200), 2)) - 200;
-            return y;
-        }
-    }, {
-        xLower : 185,
-        xUpper : 215,
-        equation : function(x) {
-            x = parseInt(x);
-            var y = -1 * Math.sqrt(225 - Math.pow((x - 200), 2)) - 200;
-            return y;
-        }
-    }
-];
+}, { 
+    xLower: 185, 
+    xUpper: 215, 
+    equation: function equation(x) {
+        x = parseInt(x);
+        var y = Math.sqrt(225 - Math.pow(x - 200, 2)) - 200;
+        return y;} }, 
+
+{ 
+    xLower: 185, 
+    xUpper: 215, 
+    equation: function equation(x) {
+        x = parseInt(x);
+        var y = -1 * Math.sqrt(225 - Math.pow(x - 200, 2)) - 200;
+        return y;} }];
+
+
+
 
 module.exports = happy_face;
-
 },{}]},{},[2])
 (2)
 });
