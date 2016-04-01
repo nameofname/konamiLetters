@@ -175,8 +175,6 @@ var _init = function _init() {
     letters = _wrapLetters();
 
     // Set the x y default position of each of the letters.
-    _positionLetters();
-
     // Remove stylesheets and Add base styling to make this all possible:
     _prepDocument();
 
@@ -216,53 +214,40 @@ var _init = function _init() {
     return this;};
 
 
+var _setStyleString = function _setStyleString(str) {
+    var style = $('<style type="text/css">' + str + '</style>');
+    $('html > head').append(style);};
+
+
 /**
  * Preps the document to be manipulated. Removes all stylesheets and adds some base styling:
  * @private
  */
 var _prepDocument = function _prepDocument() {
-    $('link').remove();
-
-    var styles = '';
-    styles += '<style>';
-    styles += 'html { min-height: 100%;}';
-    styles += 'body { position : absolute; min-width : 100%; min-height: 100%;}';
-    styles += 'div { transition: visibility: 5s;}';
-    styles += '</style>';
-
-    var style = $(styles);
-    $('html > head').append(style);
-
-    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
-    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;};
-
-
-/**
- * @private
- */
-var _positionLetters = function _positionLetters() {
+    var visibilityStyle = 'div { transition: visibility: 5s;}';
+    var motionStyle = '.nerp {' + 
+    'position: absolute;' + 
+    'transition: top 20s, left 20s, font-size 20s;' + 
+    'transform: translate3d(0,0,0); }';
 
     $('.nerp').each(function () {
-
         var position = $(this).offset();
-        $(this).data('top', position.top);
-        $(this).data('left', position.left);
-
-        $(this).css({ left: $(this).data('left') + 'px', top: $(this).data('top') + 'px' });});
+        $(this).css({ left: position.left + 'px', top: position.top + 'px' });});
 
 
-    var styles = '';
-    styles += '<style>';
-    styles += '.nerp { position: absolute; transition: top 20s, left 20s, font-size 20s; transform: translate3d(0,0,0); }';
-    styles += '</style>';
-
-    var style = $(styles);
-    $('html > head').append(style);
+    _setStyleString(motionStyle);
 
     // Now select all of the .nerp elements on the page, and remove them temporarily:
     var $nerps = $('.nerp').detach();
+
     $('body').empty();
-    $('body').append($nerps);};
+    $('body').append($nerps);
+
+    $('link').remove();
+    _setStyleString(visibilityStyle);
+    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
+    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;};
+
 
 
 
@@ -537,8 +522,6 @@ var _init = function _init() {
     letters = _wrapLetters();
 
     // Set the x y default position of each of the letters.
-    _positionLetters();
-
     // Remove stylesheets and Add base styling to make this all possible:
     _prepDocument();
 
@@ -578,53 +561,40 @@ var _init = function _init() {
     return this;};
 
 
+var _setStyleString = function _setStyleString(str) {
+    var style = $('<style type="text/css">' + str + '</style>');
+    $('html > head').append(style);};
+
+
 /**
  * Preps the document to be manipulated. Removes all stylesheets and adds some base styling:
  * @private
  */
 var _prepDocument = function _prepDocument() {
-    $('link').remove();
-
-    var styles = '';
-    styles += '<style>';
-    styles += 'html { min-height: 100%;}';
-    styles += 'body { position : absolute; min-width : 100%; min-height: 100%;}';
-    styles += 'div { transition: visibility: 5s;}';
-    styles += '</style>';
-
-    var style = $(styles);
-    $('html > head').append(style);
-
-    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
-    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;};
-
-
-/**
- * @private
- */
-var _positionLetters = function _positionLetters() {
+    var visibilityStyle = 'div { transition: visibility: 5s;}';
+    var motionStyle = '.nerp {' + 
+    'position: absolute;' + 
+    'transition: top 20s, left 20s, font-size 20s;' + 
+    'transform: translate3d(0,0,0); }';
 
     $('.nerp').each(function () {
-
         var position = $(this).offset();
-        $(this).data('top', position.top);
-        $(this).data('left', position.left);
-
-        $(this).css({ left: $(this).data('left') + 'px', top: $(this).data('top') + 'px' });});
+        $(this).css({ left: position.left + 'px', top: position.top + 'px' });});
 
 
-    var styles = '';
-    styles += '<style>';
-    styles += '.nerp { position: absolute; transition: top 20s, left 20s, font-size 20s; transform: translate3d(0,0,0); }';
-    styles += '</style>';
-
-    var style = $(styles);
-    $('html > head').append(style);
+    _setStyleString(motionStyle);
 
     // Now select all of the .nerp elements on the page, and remove them temporarily:
     var $nerps = $('.nerp').detach();
+
     $('body').empty();
-    $('body').append($nerps);};
+    $('body').append($nerps);
+
+    $('link').remove();
+    _setStyleString(visibilityStyle);
+    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
+    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;};
+
 
 
 

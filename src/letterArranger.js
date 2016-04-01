@@ -80,8 +80,6 @@ const _init = function() {
     letters = _wrapLetters();
 
     // Set the x y default position of each of the letters.
-    _positionLetters();
-
     // Remove stylesheets and Add base styling to make this all possible:
     _prepDocument();
 
@@ -121,53 +119,44 @@ const _init = function() {
     return this;
 };
 
+const _setStyleString = str => {
+    const style = $('<style type="text/css">'+ str +'</style>');
+    $('html > head').append(style);
+};
+
 /**
  * Preps the document to be manipulated. Removes all stylesheets and adds some base styling:
  * @private
  */
+    // TODO !!! THIS DOES NOT WORK THE WAY I WANT IT TO AT ALL!!!!!!
+    // IT SHOULD WRAP THE DIVS, NOT REMOVE THEM THEN REPLACE THEM, AND USE RELATIVE POSITIONING. 
 const _prepDocument = function() {
-    $('link').remove();
+    const visibilityStyle = 'div { transition: visibility: 5s;}';
+    const motionStyle = '.nerp {' +
+        'position: absolute;' +
+        'transition: top 20s, left 20s, font-size 20s;' +
+        'transform: translate3d(0,0,0); }';
 
-    let styles = '';
-    styles += '<style>';
-    styles += 'html { min-height: 100%;}';
-    styles += 'body { position : absolute; min-width : 100%; min-height: 100%;}';
-    styles += 'div { transition: visibility: 5s;}';
-    styles += '</style>';
-
-    const style = $(styles);
-    $('html > head').append(style);
-
-    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
-    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;
-};
-
-/**
- * @private
- */
-const _positionLetters = function(){
-
+    // for each letter, set the top and left position
     $('.nerp').each(function(){
-
         const position = $(this).offset();
-        $(this).data('top', position.top);
-        $(this).data('left', position.left);
-
-        $(this).css({left : $(this).data('left') + 'px', top : $(this).data('top')+ 'px'});
+        $(this).css({left : position.left + 'px', top : position.top + 'px'});
     });
 
-    let styles = '';
-    styles += '<style>';
-    styles += '.nerp { position: absolute; transition: top 20s, left 20s, font-size 20s; transform: translate3d(0,0,0); }';
-    styles += '</style>';
-
-    const style = $(styles);
-    $('html > head').append(style);
+    // next apply a motion style transform,
+    _setStyleString(motionStyle);
 
     // Now select all of the .nerp elements on the page, and remove them temporarily:
     const $nerps = $('.nerp').detach();
+
     $('body').empty();
     $('body').append($nerps);
+
+    $('link').remove();
+    _setStyleString(visibilityStyle);
+    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
+    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;
+
 };
 
 
