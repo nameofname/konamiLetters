@@ -51,7 +51,7 @@ const _newColor = function() {
 const _init = function() {
     let totalRange = 0;
 
-    for (var n=0; n < lines.length; n++) {
+    for (let n=0; n < lines.length; n++) {
         const line = lines[n];
 
         // First get the range of the line based on either the x or y boundaries:
@@ -88,8 +88,8 @@ const _init = function() {
     letterNum = letters.length;
 
     // For each line, figure out how many letters should be assigned to that line:
-    for (var i=0; i < lines.length; i++) {
-        var linea = lines[i];
+    for (let i=0; i < lines.length; i++) {
+        const linea = lines[i];
 
         // The lines number of letters is the ratio of the lines range by the total range of all lines passed,
         // multiplied by the total number of letters in the document.
@@ -108,8 +108,8 @@ const _init = function() {
 
     // Now that we have assigned all the letters to one line or another, figure out the interval for each line,
     // and create a plot for each line.
-    for (var j=0; j< lines.length; j++) {
-        var lineb = lines[j];
+    for (let j=0; j< lines.length; j++) {
+        const lineb = lines[j];
 
         // Find the interval of each line based on the number of letters divided by the range:
         lineb.interval = lineb.range / lineb.numLetters;
@@ -128,21 +128,18 @@ const _init = function() {
 const _prepDocument = function() {
     $('link').remove();
 
-    var styles = '';
+    let styles = '';
     styles += '<style>';
     styles += 'html { min-height: 100%;}';
     styles += 'body { position : absolute; min-width : 100%; min-height: 100%;}';
     styles += 'div { transition: visibility: 5s;}';
     styles += '</style>';
 
-    var style = $(styles);
+    const style = $(styles);
     $('html > head').append(style);
 
-    var width = document.getElementsByTagName('body')[0].offsetWidth;
-    var height = document.getElementsByTagName('body')[0].offsetHeight;
-
-    bodyHeight = height;
-    bodyWidth = width;
+    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
+    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;
 };
 
 /**
@@ -152,23 +149,23 @@ const _positionLetters = function(){
 
     $('.nerp').each(function(){
 
-        var position = $(this).offset();
+        const position = $(this).offset();
         $(this).data('top', position.top);
         $(this).data('left', position.left);
 
         $(this).css({left : $(this).data('left') + 'px', top : $(this).data('top')+ 'px'});
     });
 
-    var styles = '';
+    let styles = '';
     styles += '<style>';
     styles += '.nerp { position: absolute; transition: top 20s, left 20s, font-size 20s; transform: translate3d(0,0,0); }';
     styles += '</style>';
 
-    var style = $(styles);
+    const style = $(styles);
     $('html > head').append(style);
 
     // Now select all of the .nerp elements on the page, and remove them temporarily:
-    var $nerps = $('.nerp').detach();
+    const $nerps = $('.nerp').detach();
     $('body').empty();
     $('body').append($nerps);
 };
@@ -180,19 +177,18 @@ const _positionLetters = function(){
  */
 const _wrapLetters = function() {
     _getTextNodes(document.getElementsByTagName('body')[0]);
-    var nodeList = textNodes;
 
-    for (var i=0; i<nodeList.length; i++){
-        var textArr = nodeList[i].nodeValue.split(''),
-            parentElement = nodeList[i].parentElement;
+    for (let i=0; i<textNodes.length; i++){
+        const textArr = textNodes[i].nodeValue.split('');
+        const parentElement = textNodes[i].parentElement;
 
-        parentElement.removeChild(nodeList[i]);
-        for (var x=0; x<textArr.length; x++) {
+        parentElement.removeChild(textNodes[i]);
+        for (let x=0; x<textArr.length; x++) {
 
             // Do a double check here for empty string text nodes (do not use the empty strings in between
             // other full strings):
             if (textArr[x] !== ' ') {
-                var newSpan = document.createElement('span');
+                const newSpan = document.createElement('span');
 
                 newSpan.setAttribute('class', 'nerp');
 
@@ -218,7 +214,7 @@ const _getTextNodes = function(element) {
         element.remove();
     } else {
         if (element.childNodes.length > 0) {
-            for (var i = 0; i < element.childNodes.length; i++) {
+            for (let i = 0; i < element.childNodes.length; i++) {
                 _getTextNodes(element.childNodes[i]);
             }
         }
@@ -243,7 +239,7 @@ const _createPlot = function(line) {
     const equation = line.equation;
 
     // Now plot the points on the line based on the lower bound and the interval:
-    for (var x = 0; x < numLetters; x++) {
+    for (let x = 0; x < numLetters; x++) {
 
         const x1 = lower + (x * interval);
         const y = equation(x1);
@@ -252,7 +248,7 @@ const _createPlot = function(line) {
         const relativeX = x1 + (bodyWidth / 2);
         const relativeY = y + (bodyHeight / 2);
 
-        var coordinates = [relativeX,relativeY];
+        const coordinates = [relativeX,relativeY];
         line.plot.push(coordinates);
 
         // use assignmentOffset so your place is held as _createPlot gets called on subsequent lines
@@ -275,7 +271,7 @@ const stop = function() {
  */
 const startMoving = function() {
 
-    for (var i=0; i < letters.length; i++) {
+    for (let i=0; i < letters.length; i++) {
         const letter = letters[i];
         letter.style.left = letter.plotPoint[0] + 'px';
         letter.style.top = letter.plotPoint[1] + 'px';
@@ -283,14 +279,14 @@ const startMoving = function() {
     }
 
     // Increase the font size (this is a transition as stated above which is why it's done in a subsequent loop)
-    for (var j=0; j < letters.length; j++) {
+    for (let j=0; j < letters.length; j++) {
         letters[j].style.fontSize = '100px';
     }
 
     // Set an interval to flash a different color every half second.
     interval = setInterval(function(){
 
-        for (var k = 0; k < letters.length; k++) {
+        for (let k = 0; k < letters.length; k++) {
             letters[k].style.color = _newColor();
         }
 

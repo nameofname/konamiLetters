@@ -1,4 +1,4 @@
-!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.konamiLetters=e():"undefined"!=typeof global?global.konamiLetters=e():"undefined"!=typeof self&&(self.konamiLetters=e())}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.konamiLetters = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
 // Key array defaults to the konami code :
@@ -196,11 +196,8 @@ var _prepDocument = function _prepDocument() {
     var style = $(styles);
     $('html > head').append(style);
 
-    var width = document.getElementsByTagName('body')[0].offsetWidth;
-    var height = document.getElementsByTagName('body')[0].offsetHeight;
-
-    bodyHeight = height;
-    bodyWidth = width;};
+    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
+    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;};
 
 
 /**
@@ -238,13 +235,12 @@ var _positionLetters = function _positionLetters() {
  */
 var _wrapLetters = function _wrapLetters() {
     _getTextNodes(document.getElementsByTagName('body')[0]);
-    var nodeList = textNodes;
 
-    for (var i = 0; i < nodeList.length; i++) {
-        var textArr = nodeList[i].nodeValue.split(''), 
-        parentElement = nodeList[i].parentElement;
+    for (var i = 0; i < textNodes.length; i++) {
+        var textArr = textNodes[i].nodeValue.split('');
+        var parentElement = textNodes[i].parentElement;
 
-        parentElement.removeChild(nodeList[i]);
+        parentElement.removeChild(textNodes[i]);
         for (var x = 0; x < textArr.length; x++) {
 
             // Do a double check here for empty string text nodes (do not use the empty strings in between
@@ -352,7 +348,7 @@ var startMoving = function startMoving() {
             letters[k].style.color = _newColor();}}, 
 
 
-    2000); // TODO !!! determine whether 2 seconds is the proper timeout.
+    5000); // TODO !!! determine whether 5 seconds is the proper timeout.
 };
 
 
@@ -418,7 +414,5 @@ var happy_face = [
 
 
 module.exports = happy_face;
-},{}]},{},[2])
-(2)
+},{}]},{},[2])(2)
 });
-;
