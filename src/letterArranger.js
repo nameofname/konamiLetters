@@ -129,7 +129,7 @@ const _setStyleString = str => {
  * @private
  */
     // TODO !!! THIS DOES NOT WORK THE WAY I WANT IT TO AT ALL!!!!!!
-    // IT SHOULD WRAP THE DIVS, NOT REMOVE THEM THEN REPLACE THEM, AND USE RELATIVE POSITIONING. 
+    // IT SHOULD WRAP THE DIVS, NOT REMOVE THEM THEN REPLACE THEM, AND USE RELATIVE POSITIONING.
 const _prepDocument = function() {
     const visibilityStyle = 'div { transition: visibility: 5s;}';
     const motionStyle = '.nerp {' +

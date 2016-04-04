@@ -1,0 +1,20 @@
+{
+  "nextFreeModuleId": 4,
+  "modules": {
+    "byIdentifier": {
+      "node_modules/babel-loader/index.js?{\"presets\":[\"es2015\",\"stage-2\"]}!src/konamiLettersEntry.js": 0,
+      "node_modules/babel-loader/index.js?{\"presets\":[\"es2015\",\"stage-2\"]}!src/letterArranger.js": 1,
+      "node_modules/babel-loader/index.js?{\"presets\":[\"es2015\",\"stage-2\"]}!src/keyTracker.js": 2,
+      "node_modules/babel-loader/index.js?{\"presets\":[\"es2015\",\"stage-2\"]}!src/patterns/happy_face.js": 3,
+      "node_modules/babel-loader/index.js?{\"presets\":[\"es2015\",\"stage-2\"]}!src/konamiLettersBrowser.js": 0
+    }
+  },
+  "nextFreeChunkId": 2,
+  "chunks": {
+    "byName": {
+      "konamiLetters": 0,
+      "konamiLettersBrowser": 1
+    },
+    "byBlocks": {}
+  }
+}

@@ -42,9 +42,9 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/*!***********************************!*\
-  !*** ./src/konamiLettersEntry.js ***!
-  \***********************************/
+/*!*************************************!*\
+  !*** ./src/konamiLettersBrowser.js ***!
+  \*************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -62,7 +62,7 @@
 	
 	
 	
-	module.exports = function (keyArr, pattern, callback) {
+	window.konamiLetters = function (keyArr, pattern, callback) {
 	    pattern = pattern || happy_face;
 	    keyTracker(keyArr, function () {
 	        letterArranger(pattern);
@@ -475,4 +475,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=konamiLetters.js.map
+//# sourceMappingURL=konamiLettersBrowser.js.map
