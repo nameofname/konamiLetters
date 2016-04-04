@@ -209,7 +209,7 @@
 	
 	
 	var _prepDocument = function _prepDocument() {
-	    var visibilityStyle = 'div { transition: visibility: 5s;}';
+	    console.log('yee haw!');
 	    var motionStyle = '.nerp {' + 
 	    'position: absolute;' + 
 	    'transition: top 20s, left 20s, font-size 20s;' + 
@@ -227,11 +227,13 @@
 	
 	    var $nerps = $('.nerp').detach();
 	
+	
 	    $('body').empty();
 	    $('body').append($nerps);
-	
 	    $('link').remove();
-	    _setStyleString(visibilityStyle);
+	
+	
+	
 	    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
 	    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;};
 	

@@ -131,7 +131,7 @@ const _setStyleString = str => {
     // TODO !!! THIS DOES NOT WORK THE WAY I WANT IT TO AT ALL!!!!!!
     // IT SHOULD WRAP THE DIVS, NOT REMOVE THEM THEN REPLACE THEM, AND USE RELATIVE POSITIONING.
 const _prepDocument = function() {
-    const visibilityStyle = 'div { transition: visibility: 5s;}';
+    console.log('yee haw!')
     const motionStyle = '.nerp {' +
         'position: absolute;' +
         'transition: top 20s, left 20s, font-size 20s;' +
@@ -149,11 +149,13 @@ const _prepDocument = function() {
     // Now select all of the .nerp elements on the page, and remove them temporarily:
     const $nerps = $('.nerp').detach();
 
+    // remove everything from the body (including stylesheets), then re-attach the nerps.
     $('body').empty();
     $('body').append($nerps);
-
     $('link').remove();
-    _setStyleString(visibilityStyle);
+
+    // set a transition for visibility on all div elements
+    //_setStyleString('div { transition: visibility: 5s;}');// can't figure out why this used to be here ...
     bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
     bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;
 
