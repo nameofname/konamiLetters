@@ -257,6 +257,18 @@
 	        var parentElement = textNodes[i].parentElement;
 	        var position = parentElement.getBoundingClientRect();
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	        for (var x = 0; x < textArr.length; x++) {
 	
 	            if (textArr[x] !== ' ') {

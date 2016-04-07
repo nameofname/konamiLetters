@@ -179,6 +179,18 @@ const _cloneLetters = function() {
         const parentElement = textNodes[i].parentElement;
         const position = parentElement.getBoundingClientRect();
 
+        // TODO ::: !!!!!!!!!!!!!!!!!!!!!!!!!!
+        // the positioning for these letters doesn't exactly work because we are only getting the offset of the
+        // paretn element.
+        // you cannot get the offset of the letter becaues the browser doesn't have this information, each node has
+        // info on positioning, but each letter is not a node.
+        // to get around this, we are going to clone EVERY letter, then for every letter cloned, wrap in a span (as I
+        // am already) and put it in the same container element with the nodes that are already there - then get the
+        // offset positioning relative to the parent. Since the span adds no additional styling, it should be exactly
+        // the same offset (relative to the parent element) that the letter inside would be. Add this number to the
+        // offset posotioning of the parent relative to the window, obtained from getBoundingClientRect(). 
+
+
         for (let x = 0; x < textArr.length; x++) {
 
             if (textArr[x] !== ' ') { // Check the string is not a space :
