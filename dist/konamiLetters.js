@@ -245,6 +245,7 @@
 	
 	
 	var _cloneLetters = function _cloneLetters() {
+	    var body = document.getElementsByTagName('body')[0];
 	
 	
 	    _getTextNodes(document.getElementsByTagName('body')[0]);
@@ -254,6 +255,7 @@
 	
 	        var textArr = textNodes[i].nodeValue.split('');
 	        var parentElement = textNodes[i].parentElement;
+	        var position = parentElement.getBoundingClientRect();
 	
 	        for (var x = 0; x < textArr.length; x++) {
 	
@@ -261,7 +263,12 @@
 	                var newSpan = document.createElement('span');
 	                newSpan.setAttribute('class', nodeClass);
 	                newSpan.appendChild(document.createTextNode(textArr[x]));
-	                parentElement.appendChild(newSpan, textArr[x]);}}}
+	
+	
+	                newSpan.style.position = 'absolute';
+	                newSpan.style.top = position.top + 'px';
+	                newSpan.style.left = position.left + 'px';
+	                body.appendChild(newSpan, textArr[x]);}}}
 	
 	
 	
@@ -284,10 +291,6 @@
 	    if (element.childNodes.length > 0) {
 	        for (var i = 0; i < element.childNodes.length; i++) {
 	            _getTextNodes(element.childNodes[i]);}}};
-	
-	
-	
-	
 	
 	
 	

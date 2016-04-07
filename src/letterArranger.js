@@ -167,6 +167,7 @@ const _prepDocument = function() {
  * @private
  */
 const _cloneLetters = function() {
+    const body = document.getElementsByTagName('body')[0];
 
     // populates textNodes array :
     _getTextNodes(document.getElementsByTagName('body')[0]);
@@ -176,6 +177,7 @@ const _cloneLetters = function() {
 
         const textArr = textNodes[i].nodeValue.split('');
         const parentElement = textNodes[i].parentElement;
+        const position = parentElement.getBoundingClientRect();
 
         for (let x = 0; x < textArr.length; x++) {
 
@@ -183,7 +185,12 @@ const _cloneLetters = function() {
                 const newSpan = document.createElement('span');
                 newSpan.setAttribute('class', nodeClass);
                 newSpan.appendChild( document.createTextNode(textArr[x]) );
-                parentElement.appendChild( newSpan, textArr[x]);
+
+                // set the positioning of the new clone letter :
+                newSpan.style.position = 'absolute';
+                newSpan.style.top = position.top + 'px';
+                newSpan.style.left = position.left + 'px';
+                body.appendChild( newSpan, textArr[x]);
             }
         }
     }
@@ -208,10 +215,6 @@ const _getTextNodes = function(element) {
             _getTextNodes(element.childNodes[i]);
         }
     }
-
-        //if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
-        //    textNodes.push(element);
-        //}
 };
 
 /**
