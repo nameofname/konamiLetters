@@ -111,6 +111,8 @@
 	var bodyWidth = null;
 	var totalLettersUsed = 0;
 	var assignmentOffset = 0;
+	var nodeClass = 'nerp';
+	var nodeClassName = '.' + nodeClass;
 	
 	
 	var newNum = function newNum() {
@@ -155,7 +157,7 @@
 	
 	
 	
-	    letters = _wrapLetters();
+	    letters = _cloneLetters();
 	
 	
 	
@@ -209,14 +211,13 @@
 	
 	
 	var _prepDocument = function _prepDocument() {
-	    console.log('yee haw!');
-	    var motionStyle = '.nerp {' + 
+	    var motionStyle = nodeClassName + '{' + 
 	    'position: absolute;' + 
 	    'transition: top 20s, left 20s, font-size 20s;' + 
 	    'transform: translate3d(0,0,0); }';
 	
 	
-	    $('.nerp').each(function () {
+	    $(nodeClassName).each(function () {
 	        var position = $(this).offset();
 	        $(this).css({ left: position.left + 'px', top: position.top + 'px' });});
 	
@@ -225,11 +226,11 @@
 	    _setStyleString(motionStyle);
 	
 	
-	    var $nerps = $('.nerp').detach();
+	    var $clonedLetters = $(nodeClassName).detach();
 	
 	
 	    $('body').empty();
-	    $('body').append($nerps);
+	    $('body').append($clonedLetters);
 	    $('link').remove();
 	
 	
@@ -243,31 +244,29 @@
 	
 	
 	
+	var _cloneLetters = function _cloneLetters() {
 	
-	var _wrapLetters = function _wrapLetters() {
+	
 	    _getTextNodes(document.getElementsByTagName('body')[0]);
 	
+	
 	    for (var i = 0; i < textNodes.length; i++) {
+	
 	        var textArr = textNodes[i].nodeValue.split('');
 	        var parentElement = textNodes[i].parentElement;
 	
-	        parentElement.removeChild(textNodes[i]);
 	        for (var x = 0; x < textArr.length; x++) {
-	
-	
 	
 	            if (textArr[x] !== ' ') {
 	                var newSpan = document.createElement('span');
-	
-	                newSpan.setAttribute('class', 'nerp');
-	
+	                newSpan.setAttribute('class', nodeClass);
 	                newSpan.appendChild(document.createTextNode(textArr[x]));
 	                parentElement.appendChild(newSpan, textArr[x]);}}}
 	
 	
 	
 	
-	    return document.getElementsByClassName('nerp');};
+	    return document.getElementsByClassName(nodeClass);};
 	
 	
 	
@@ -279,17 +278,16 @@
 	var _getTextNodes = function _getTextNodes(element) {
 	
 	
-	    if (element.tagName === 'SCRIPT') {
-	        element.remove();} else 
-	    {
-	        if (element.childNodes.length > 0) {
-	            for (var i = 0; i < element.childNodes.length; i++) {
-	                _getTextNodes(element.childNodes[i]);}}
+	    if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
+	        textNodes.push(element);} else 
+	
+	    if (element.childNodes.length > 0) {
+	        for (var i = 0; i < element.childNodes.length; i++) {
+	            _getTextNodes(element.childNodes[i]);}}};
 	
 	
 	
-	        if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
-	            textNodes.push(element);}}};
+	
 	
 	
 	

@@ -33,6 +33,8 @@ let bodyHeight = null; // The width and height of the body document that you are
 let bodyWidth = null;
 let totalLettersUsed = 0; // The total letters assigned to a line:
 let assignmentOffset = 0; // Place holder used to iterate over all the letters on the page.
+const nodeClass = 'nerp';
+const nodeClassName = '.' + nodeClass;
 
 // Generate a new random RGB color.
 const newNum = () => {
@@ -76,8 +78,8 @@ const _init = function() {
         totalRange += lines[n].range;
     }
 
-    // Wrap all the letters in a span tag and get the returned list.
-    letters = _wrapLetters();
+    // Clone all the letters you are going to use, the wrap the clones in a span tag
+    letters = _cloneLetters();
 
     // Set the x y default position of each of the letters.
     // Remove stylesheets and Add base styling to make this all possible:
@@ -131,14 +133,13 @@ const _setStyleString = str => {
     // TODO !!! THIS DOES NOT WORK THE WAY I WANT IT TO AT ALL!!!!!!
     // IT SHOULD WRAP THE DIVS, NOT REMOVE THEM THEN REPLACE THEM, AND USE RELATIVE POSITIONING.
 const _prepDocument = function() {
-    console.log('yee haw!')
-    const motionStyle = '.nerp {' +
+    const motionStyle = nodeClassName + '{' +
         'position: absolute;' +
         'transition: top 20s, left 20s, font-size 20s;' +
         'transform: translate3d(0,0,0); }';
 
     // for each letter, set the top and left position
-    $('.nerp').each(function(){
+    $(nodeClassName).each(function(){
         const position = $(this).offset();
         $(this).css({left : position.left + 'px', top : position.top + 'px'});
     });
@@ -146,19 +147,18 @@ const _prepDocument = function() {
     // next apply a motion style transform,
     _setStyleString(motionStyle);
 
-    // Now select all of the .nerp elements on the page, and remove them temporarily:
-    const $nerps = $('.nerp').detach();
+    // Now select all of the cloned letter elements on the page, and remove them temporarily:
+    const $clonedLetters = $(nodeClassName).detach();
 
     // remove everything from the body (including stylesheets), then re-attach the nerps.
     $('body').empty();
-    $('body').append($nerps);
+    $('body').append($clonedLetters);
     $('link').remove();
 
     // set a transition for visibility on all div elements
     //_setStyleString('div { transition: visibility: 5s;}');// can't figure out why this used to be here ...
     bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
     bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;
-
 };
 
 
@@ -166,30 +166,29 @@ const _prepDocument = function() {
  * Wrap each of the letters on the page in a span tag, and return a DOM reference to the letters on the page.
  * @private
  */
-const _wrapLetters = function() {
+const _cloneLetters = function() {
+
+    // populates textNodes array :
     _getTextNodes(document.getElementsByTagName('body')[0]);
 
-    for (let i=0; i<textNodes.length; i++){
+    // for each text node, split into each letter, then for each letter, create your clone :
+    for (let i = 0; i < textNodes.length; i++){
+
         const textArr = textNodes[i].nodeValue.split('');
         const parentElement = textNodes[i].parentElement;
 
-        parentElement.removeChild(textNodes[i]);
-        for (let x=0; x<textArr.length; x++) {
+        for (let x = 0; x < textArr.length; x++) {
 
-            // Do a double check here for empty string text nodes (do not use the empty strings in between
-            // other full strings):
-            if (textArr[x] !== ' ') {
+            if (textArr[x] !== ' ') { // Check the string is not a space :
                 const newSpan = document.createElement('span');
-
-                newSpan.setAttribute('class', 'nerp');
-
+                newSpan.setAttribute('class', nodeClass);
                 newSpan.appendChild( document.createTextNode(textArr[x]) );
                 parentElement.appendChild( newSpan, textArr[x]);
             }
         }
     }
 
-    return document.getElementsByClassName('nerp');
+    return document.getElementsByClassName(nodeClass);
 };
 
 
@@ -201,19 +200,18 @@ const _wrapLetters = function() {
 const _getTextNodes = function(element) {
 
     // Don't recurse into scripts, kill 'em.
-    if (element.tagName === 'SCRIPT') {
-        element.remove();
-    } else {
-        if (element.childNodes.length > 0) {
-            for (let i = 0; i < element.childNodes.length; i++) {
-                _getTextNodes(element.childNodes[i]);
-            }
-        }
+    if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
+        textNodes.push(element);
 
-        if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
-            textNodes.push(element);
+    } else if (element.childNodes.length > 0) {
+        for (let i = 0; i < element.childNodes.length; i++) {
+            _getTextNodes(element.childNodes[i]);
         }
     }
+
+        //if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
+        //    textNodes.push(element);
+        //}
 };
 
 /**
