@@ -80,6 +80,7 @@ const _init = function() {
 
     // Clone all the letters you are going to use, the wrap the clones in a span tag
     letters = _cloneLetters();
+    return;
 
     // Set the x y default position of each of the letters.
     // Remove stylesheets and Add base styling to make this all possible:
@@ -173,38 +174,46 @@ const _cloneLetters = function() {
     _getTextNodes(document.getElementsByTagName('body')[0]);
 
     // for each text node, split into each letter, then for each letter, create your clone :
-    for (let i = 0; i < textNodes.length; i++){
+    for (let i = 0; i < textNodes.length; i++) {
 
         const textArr = textNodes[i].nodeValue.split('');
         const parentElement = textNodes[i].parentElement;
-        const position = parentElement.getBoundingClientRect();
-
-        // TODO ::: !!!!!!!!!!!!!!!!!!!!!!!!!!
-        // the positioning for these letters doesn't exactly work because we are only getting the offset of the
-        // paretn element.
-        // you cannot get the offset of the letter becaues the browser doesn't have this information, each node has
-        // info on positioning, but each letter is not a node.
-        // to get around this, we are going to clone EVERY letter, then for every letter cloned, wrap in a span (as I
-        // am already) and put it in the same container element with the nodes that are already there - then get the
-        // offset positioning relative to the parent. Since the span adds no additional styling, it should be exactly
-        // the same offset (relative to the parent element) that the letter inside would be. Add this number to the
-        // offset posotioning of the parent relative to the window, obtained from getBoundingClientRect(). 
-
+        const removedNode = parentElement.removeChild(textNodes[i]);
+        let previousInsertedEl = parentElement.firstChild;
 
         for (let x = 0; x < textArr.length; x++) {
 
-            if (textArr[x] !== ' ') { // Check the string is not a space :
-                const newSpan = document.createElement('span');
-                newSpan.setAttribute('class', nodeClass);
-                newSpan.appendChild( document.createTextNode(textArr[x]) );
+            const newSpan = document.createElement('span');
+            newSpan.setAttribute('class', nodeClass);
+            newSpan.appendChild( document.createTextNode(textArr[x]) );
+            parentElement.appendChild(newSpan);
 
-                // set the positioning of the new clone letter :
-                newSpan.style.position = 'absolute';
-                newSpan.style.top = position.top + 'px';
-                newSpan.style.left = position.left + 'px';
-                body.appendChild( newSpan, textArr[x]);
-            }
+            const position = newSpan.getBoundingClientRect();
+
+            // now get the position for this element based on the position of the parent element (top and left)
+            // combined with the position of the element relative to the parent container :
+            newSpan.style.top = position.top + 'px';
+            newSpan.style.left = position.left + 'px';
+
+            previousInsertedEl = newSpan;
         }
+
+
+        const newLetters = document.querySelectorAll('.' + nodeClass);
+        for (let j = 0; j < newLetters.length; j++) {
+
+            // TODO ::: inside of here, get rid of spaces.
+            const letter = newLetters[j];
+            const parent = letter.parentElement;
+            letter.style.position = 'absolute';
+            parent.removeChild(letter);
+            body.appendChild(letter);
+        }
+
+        //if (textArr[x] !== ' ') { // Check the string is not a space :
+        //}
+
+        parentElement.appendChild(removedNode);
     }
 
     return document.getElementsByClassName(nodeClass);
@@ -306,5 +315,5 @@ module.exports = function (pattern) {
     }
     lines = pattern;
     _init();
-    startMoving();
+    //startMoving();
 };

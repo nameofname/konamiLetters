@@ -18,7 +18,7 @@
     "babel-loader": "^6.2.4"
   },
   "scripts": {
-    "build": "webpack -d --progress --colors --watch"
+    "build": "webpack -d --progress --watch"
   },
   "repository": {
     "type": "git",
