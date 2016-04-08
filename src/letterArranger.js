@@ -173,7 +173,14 @@ const _cloneLetters = function() {
     // populates textNodes array :
     _getTextNodes(document.getElementsByTagName('body')[0]);
 
-    // for each text node, split into each letter, then for each letter, create your clone :
+    // TODO !!! This appraoct cannot deal with line wrapping in your letters.
+    // TODO !!! we need to do something here to deal with words falling onto the next line, it messes up the position
+    // TODO !!! of the letters.
+
+    // for each text node, split into each letter, then for each letter, create a clone, append it to the parent
+    // container, and get the position of the placed element using getBoundingClientRect().
+    // IMPORTANT! getBoundingClientRect considers the position of the element with regards to the body. It must
+    // be in place in the document to get the position reliably.
     for (let i = 0; i < textNodes.length; i++) {
 
         const textArr = textNodes[i].nodeValue.split('');
@@ -187,33 +194,33 @@ const _cloneLetters = function() {
             newSpan.setAttribute('class', nodeClass);
             newSpan.appendChild( document.createTextNode(textArr[x]) );
             parentElement.appendChild(newSpan);
-
             const position = newSpan.getBoundingClientRect();
 
             // now get the position for this element based on the position of the parent element (top and left)
             // combined with the position of the element relative to the parent container :
             newSpan.style.top = position.top + 'px';
             newSpan.style.left = position.left + 'px';
-
             previousInsertedEl = newSpan;
         }
 
 
+        // Now that each letter has a position, we loop over them all again, set each position to absolute, then place
+        // in the body of the document.
+        // NOTE : Here we MUST use querySelectorAll or another method that returns a static list so we can iterate
+        // over the elements in order.
         const newLetters = document.querySelectorAll('.' + nodeClass);
         for (let j = 0; j < newLetters.length; j++) {
-
-            // TODO ::: inside of here, get rid of spaces.
             const letter = newLetters[j];
             const parent = letter.parentElement;
             letter.style.position = 'absolute';
             parent.removeChild(letter);
-            body.appendChild(letter);
+            if (letter.innerText !== ' ') { // Check the string is not a space :
+                body.appendChild(letter);
+            }
         }
 
-        //if (textArr[x] !== ' ') { // Check the string is not a space :
-        //}
 
-        parentElement.appendChild(removedNode);
+        //parentElement.appendChild(removedNode);
     }
 
     return document.getElementsByClassName(nodeClass);
@@ -315,5 +322,5 @@ module.exports = function (pattern) {
     }
     lines = pattern;
     _init();
-    //startMoving();
+    startMoving();
 };
