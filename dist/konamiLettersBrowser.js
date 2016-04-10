@@ -288,18 +288,34 @@
 	            letter.style.left = position.left + 'px';}
 	
 	
-	
-	
-	        for (var _j = 0; _j < newLetters.length; _j++) {
-	            var _letter = newLetters[_j];
-	            var parent = _letter.parentElement;
+	        var docFrag = document.createDocumentFragment();
+	        for (var k = 0; k < newLetters.length; k++) {
+	            var _letter = newLetters[k].parentElement.removeChild(newLetters[k]);
 	            _letter.style.position = 'absolute';
-	            parent.removeChild(_letter);
-	            body.appendChild(_letter);}
+	            docFrag.appendChild(_letter);}
 	
 	
-	
+	        body.appendChild(docFrag);
 	        parentElement.appendChild(removedNode);}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	    return document.getElementsByClassName(nodeClass);};
