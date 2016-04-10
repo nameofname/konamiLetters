@@ -299,25 +299,6 @@
 	        parentElement.appendChild(removedNode);}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	    return document.getElementsByClassName(nodeClass);};
 	
 	

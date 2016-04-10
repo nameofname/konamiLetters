@@ -219,25 +219,6 @@ const _cloneLetters = function() {
 
         body.appendChild(docFrag);
         parentElement.appendChild(removedNode);
-
-
-
-        // This is fast, but relies on jquery :
-        //$('.nerp').css('position', 'absolute');
-        //const removed = $('.nerp').remove();
-        //$('body').append(removed);
-
-        // TODO ::: Reduce the number of DOM paints by doing this all at once instead of all at the same time.
-        //for (let j = 0; j < newLetters.length; j++) {
-        //    const letter = newLetters[j];
-        //    const parent = letter.parentElement;
-        //    letter.style.position = 'absolute';
-        //    parent.removeChild(letter);
-        //    body.appendChild(letter);
-        //}
-
-
-
     }
 
     return document.getElementsByClassName(nodeClass);
