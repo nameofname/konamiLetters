@@ -171,7 +171,7 @@ const _cloneLetters = function() {
     const body = document.getElementsByTagName('body')[0];
 
     // populates textNodes array :
-    _getTextNodes(document.getElementsByTagName('body')[0]);
+    _getTextNodes(body);
 
     // for each text node, split into each letter, then for each letter, create a clone, append it to the parent
     // container.
@@ -218,7 +218,7 @@ const _cloneLetters = function() {
         }
 
         body.appendChild(docFrag);
-        parentElement.appendChild(removedNode);
+        //parentElement.appendChild(removedNode);
     }
 
     return document.getElementsByClassName(nodeClass);

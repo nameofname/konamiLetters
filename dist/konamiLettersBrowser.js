@@ -249,7 +249,7 @@
 	    var body = document.getElementsByTagName('body')[0];
 	
 	
-	    _getTextNodes(document.getElementsByTagName('body')[0]);
+	    _getTextNodes(body);
 	
 	
 	
@@ -295,8 +295,8 @@
 	            docFrag.appendChild(_letter);}
 	
 	
-	        body.appendChild(docFrag);
-	        parentElement.appendChild(removedNode);}
+	        body.appendChild(docFrag);}
+	
 	
 	
 	    return document.getElementsByClassName(nodeClass);};
