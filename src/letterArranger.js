@@ -27,12 +27,12 @@
 let lines; // a reference to the pattern passed to the entry function.
 let letters = []; // References to all of the wrapped letters on the page, and all the text nodes on the page:
 const textNodes = [];
-let letterNum = null; // The number of letters on the page:
 let interval = null; // an interval for updating the color which can be stopped.
 let bodyHeight = null; // The width and height of the body document that you are dealing with.
 let bodyWidth = null;
 let totalLettersUsed = 0; // The total letters assigned to a line:
 let assignmentOffset = 0; // Place holder used to iterate over all the letters on the page.
+let totalRange = 0;
 const nodeClass = 'nerp';
 const nodeClassName = '.' + nodeClass;
 
@@ -40,7 +40,7 @@ const nodeClassName = '.' + nodeClass;
 const newNum = () => {
     return Math.floor(Math.random() * 256);
 };
-const _newColor = function() {
+const _newColor = function () {
     const color = 'rgb('+ newNum()  +','+ newNum() +','+ newNum() +')';
     return color;
 };
@@ -50,37 +50,13 @@ const _newColor = function() {
  * Evaluate each of the passed in line descriptions, and prepare the document to be ... played with.
  * @private
  */
-const _init = function() {
-    let totalRange = 0;
+const _init = function () {
 
-    for (let n=0; n < lines.length; n++) {
-        const line = lines[n];
+    let letterNum;
 
-        // First get the range of the line based on either the x or y boundaries:
-        if (line.hasOwnProperty('xLower') && line.hasOwnProperty('xUpper')) {
-            line.range = line.xUpper - line.xLower;
-        } else if (line.hasOwnProperty('yLower') && line.hasOwnProperty('yUpper')) {
-            line.range = line.yUpper - line.yLower;
+    _calculateRanges(); // calculate the range of each line
 
-            // If the line has no bounds, then throw an error.
-        } else {
-            throw new Error('You must include either x or y boundaries for each line configuration passed');
-        }
-
-        // Add a plot attribute to each line:
-        lines[n].plot = [];
-
-        // Add up the total range of all of the lines
-        // used later on to figure out how many letters assigned to each line.
-        // It's a crude solution that doesn't account for curvature in the lines, but the length or width of each
-        // line is taken into account along the x or y access. This means lines straight up or across will have
-        // proportionally more letters assigned to them.
-        totalRange += lines[n].range;
-    }
-
-    // Clone all the letters you are going to use, the wrap the clones in a span tag
-    letters = _cloneLetters();
-    return;
+    _cloneLetters(); // Clone all the letters you are going to use, wrapping the clones in a span tag
 
     // Set the x y default position of each of the letters.
     // Remove stylesheets and Add base styling to make this all possible:
@@ -122,6 +98,37 @@ const _init = function() {
     return this;
 };
 
+/**
+ * Performs some basic math, allotting a 'range' to each of the lines in the pattern.
+ * @private
+ */
+const _calculateRanges = function () {
+    for (let n=0; n < lines.length; n++) {
+        const line = lines[n];
+
+        // First get the range of the line based on either the x or y boundaries:
+        if (line.hasOwnProperty('xLower') && line.hasOwnProperty('xUpper')) {
+            line.range = line.xUpper - line.xLower;
+        } else if (line.hasOwnProperty('yLower') && line.hasOwnProperty('yUpper')) {
+            line.range = line.yUpper - line.yLower;
+
+            // If the line has no bounds, then throw an error.
+        } else {
+            throw new Error('You must include either x or y boundaries for each line configuration passed');
+        }
+
+        // Add a plot attribute to each line:
+        lines[n].plot = [];
+
+        // Add up the total range of all of the lines
+        // used later on to figure out how many letters assigned to each line.
+        // It's a crude solution that doesn't account for curvature in the lines, but the length or width of each
+        // line is taken into account along the x or y access. This means lines straight up or across will have
+        // proportionally more letters assigned to them.
+        totalRange += lines[n].range;
+    }
+};
+
 const _setStyleString = str => {
     const style = $('<style type="text/css">'+ str +'</style>');
     $('html > head').append(style);
@@ -133,14 +140,14 @@ const _setStyleString = str => {
  */
     // TODO !!! THIS DOES NOT WORK THE WAY I WANT IT TO AT ALL!!!!!!
     // IT SHOULD WRAP THE DIVS, NOT REMOVE THEM THEN REPLACE THEM, AND USE RELATIVE POSITIONING.
-const _prepDocument = function() {
+const _prepDocument = function () {
     const motionStyle = nodeClassName + '{' +
         'position: absolute;' +
         'transition: top 20s, left 20s, font-size 20s;' +
         'transform: translate3d(0,0,0); }';
 
     // for each letter, set the top and left position
-    $(nodeClassName).each(function(){
+    $(nodeClassName).each(function (){
         const position = $(this).offset();
         $(this).css({left : position.left + 'px', top : position.top + 'px'});
     });
@@ -167,7 +174,7 @@ const _prepDocument = function() {
  * Wrap each of the letters on the page in a span tag, and return a DOM reference to the letters on the page.
  * @private
  */
-const _cloneLetters = function() {
+const _cloneLetters = function () {
     const body = document.getElementsByTagName('body')[0];
 
     // populates textNodes array :
@@ -227,7 +234,7 @@ const _cloneLetters = function() {
         textNodes[i].parentElement.removeChild(textNodes[i]);
     }
 
-    return document.getElementsByClassName(nodeClass);
+    letters = document.getElementsByClassName(nodeClass);
 };
 
 
@@ -237,8 +244,7 @@ const _cloneLetters = function() {
  * http://stackoverflow.com/users/515502/rahat-ahmed
  */
 const _getTextNodes = function(element) {
-
-    // Only pick up text nodes from paragraphs, span tags, divs
+    // TODO !!! Only pick up text nodes from paragraphs, span tags, divs
     if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
         textNodes.push(element);
 
@@ -283,17 +289,10 @@ const _createPlot = function(line) {
 
 
 /**
- * Stop the dance.
- */
-const stop = function() {
-    clearInterval(interval);
-};
-
-/**
  * Start moving the letters on the page according to CSS transitions, then according to an interval which will
  * flash all the letters different colors.
  */
-const startMoving = function() {
+const startMoving = function () {
 
     for (let i=0; i < letters.length; i++) {
         const letter = letters[i];
@@ -306,16 +305,25 @@ const startMoving = function() {
     for (let j=0; j < letters.length; j++) {
         letters[j].style.fontSize = '100px';
     }
+};
 
-    // Set an interval to flash a different color every half second.
-    interval = setInterval(function(){
+/**
+ * Set an interval to flash a different color every half second.
+ */
+const flashColors = function () {
 
+    interval = setInterval(function (){
         for (let k = 0; k < letters.length; k++) {
             letters[k].style.color = _newColor();
         }
+    }, 5000);
+};
 
-    }, 5000); // TODO !!! determine whether 5 seconds is the proper timeout.
-
+/**
+ * Stop flashing letter colors.
+ */
+const stopFlashing = function () {
+    clearInterval(interval);
 };
 
 
@@ -325,5 +333,5 @@ module.exports = function (pattern) {
     }
     lines = pattern;
     _init();
-    //startMoving();
+    startMoving();
 };

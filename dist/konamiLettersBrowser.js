@@ -105,12 +105,12 @@
 	var lines = void 0;
 	var letters = [];
 	var textNodes = [];
-	var letterNum = null;
 	var interval = null;
 	var bodyHeight = null;
 	var bodyWidth = null;
 	var totalLettersUsed = 0;
 	var assignmentOffset = 0;
+	var totalRange = 0;
 	var nodeClass = 'nerp';
 	var nodeClassName = '.' + nodeClass;
 	
@@ -129,36 +129,12 @@
 	
 	
 	var _init = function _init() {
-	    var totalRange = 0;
 	
-	    for (var n = 0; n < lines.length; n++) {
-	        var line = lines[n];
+	    var letterNum = void 0;
 	
+	    _calculateRanges();
 	
-	        if (line.hasOwnProperty('xLower') && line.hasOwnProperty('xUpper')) {
-	            line.range = line.xUpper - line.xLower;} else 
-	        if (line.hasOwnProperty('yLower') && line.hasOwnProperty('yUpper')) {
-	            line.range = line.yUpper - line.yLower;} else 
-	
-	
-	            {
-	                throw new Error('You must include either x or y boundaries for each line configuration passed');}
-	
-	
-	
-	        lines[n].plot = [];
-	
-	
-	
-	
-	
-	
-	        totalRange += lines[n].range;}
-	
-	
-	
-	    letters = _cloneLetters();
-	    return;
+	    _cloneLetters();
 	
 	
 	
@@ -198,6 +174,37 @@
 	
 	
 	    return this;};
+	
+	
+	
+	
+	
+	
+	var _calculateRanges = function _calculateRanges() {
+	    for (var n = 0; n < lines.length; n++) {
+	        var line = lines[n];
+	
+	
+	        if (line.hasOwnProperty('xLower') && line.hasOwnProperty('xUpper')) {
+	            line.range = line.xUpper - line.xLower;} else 
+	        if (line.hasOwnProperty('yLower') && line.hasOwnProperty('yUpper')) {
+	            line.range = line.yUpper - line.yLower;} else 
+	
+	
+	            {
+	                throw new Error('You must include either x or y boundaries for each line configuration passed');}
+	
+	
+	
+	        lines[n].plot = [];
+	
+	
+	
+	
+	
+	
+	        totalRange += lines[n].range;}};
+	
 	
 	
 	var _setStyleString = function _setStyleString(str) {
@@ -305,7 +312,7 @@
 	        textNodes[_i].parentElement.removeChild(textNodes[_i]);}
 	
 	
-	    return document.getElementsByClassName(nodeClass);};
+	    letters = document.getElementsByClassName(nodeClass);};
 	
 	
 	
@@ -315,7 +322,6 @@
 	
 	
 	var _getTextNodes = function _getTextNodes(element) {
-	
 	
 	    if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
 	        textNodes.push(element);} else 
@@ -363,13 +369,6 @@
 	
 	
 	
-	var stop = function stop() {
-	    clearInterval(interval);};
-	
-	
-	
-	
-	
 	
 	var startMoving = function startMoving() {
 	
@@ -382,18 +381,27 @@
 	
 	
 	    for (var j = 0; j < letters.length; j++) {
-	        letters[j].style.fontSize = '100px';}
+	        letters[j].style.fontSize = '100px';}};
 	
 	
+	
+	
+	
+	
+	var flashColors = function flashColors() {
 	
 	    interval = setInterval(function () {
-	
 	        for (var k = 0; k < letters.length; k++) {
 	            letters[k].style.color = _newColor();}}, 
 	
-	
 	    5000);};
 	
+	
+	
+	
+	
+	var stopFlashing = function stopFlashing() {
+	    clearInterval(interval);};
 	
 	
 	
@@ -402,7 +410,8 @@
 	        throw new Error('You cannot use the LetterArranger without an an array of objects describing the pattern.');}
 	
 	    lines = pattern;
-	    _init();};
+	    _init();
+	    startMoving();};
 
 /***/ },
 /* 2 */
