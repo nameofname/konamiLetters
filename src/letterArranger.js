@@ -238,7 +238,7 @@ const _cloneLetters = function() {
  */
 const _getTextNodes = function(element) {
 
-    // Don't recurse into scripts, kill 'em.
+    // Only pick up text nodes from paragraphs, span tags, divs
     if (element.nodeType === Node.TEXT_NODE && element.nodeValue.trim() != '') {
         textNodes.push(element);
 
@@ -317,7 +317,6 @@ const startMoving = function() {
     }, 5000); // TODO !!! determine whether 5 seconds is the proper timeout.
 
 };
-
 
 
 module.exports = function (pattern) {

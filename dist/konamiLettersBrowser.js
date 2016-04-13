@@ -397,7 +397,6 @@
 	
 	
 	
-	
 	module.exports = function (pattern) {
 	    if (!pattern) {
 	        throw new Error('You cannot use the LetterArranger without an an array of objects describing the pattern.');}
