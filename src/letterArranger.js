@@ -28,9 +28,8 @@ const textNodes = [];
 const nodeClass = 'nerp';
 const nodeClassName = '.' + nodeClass;
 let lines; // a reference to the pattern passed to the entry function.
-let letters = []; // References to all of the wrapped letters on the page, and all the text nodes on the page:
+let letters = []; // References to all of the wrapped letters on the page.
 let interval = null; // an interval for updating the color which can be stopped.
-let totalLettersUsed = 0; // The total letters assigned to a line:
 let assignmentOffset = 0; // Place holder used to iterate over all the letters on the page.
 let totalRange = 0;
 
@@ -60,8 +59,6 @@ const _init = function () {
         // For each function, invoke it for it's specified range along the specified interval:
         _createPlot(line);
     }
-
-    return this;
 };
 
 /**
@@ -128,7 +125,9 @@ const _prepDocument = function () {
  * @private
  */
 const _assignLetters = () => {
+
     const letterNum = letters.length;
+    let totalLettersUsed = 0;
 
     // For each line, figure out how many letters should be assigned to that line:
     for (let i=0; i < lines.length; i++) {
@@ -141,12 +140,9 @@ const _assignLetters = () => {
     }
 
     // Note * Since we are using Math.floor to calculate the numLetters - sometimes there will be a small remainder.
-    // Check for this case and adjust:
+    // Check for this case and adjust by adding the remainder letters to the last line.
     if (letterNum !== totalLettersUsed) {
-
-        // Add the remainder letters to the last line:
         lines[lines.length - 1].numLetters += (letterNum - totalLettersUsed);
-        totalLettersUsed += (letterNum - totalLettersUsed);
     }
 };
 
@@ -247,8 +243,8 @@ const _createPlot = function(line) {
     const interval = line.interval;
     const lower = line.hasOwnProperty('xLower') ? line.xLower : line.yLower;
     const equation = line.equation;
-    const bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;;
-    const bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;;
+    const bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;
+    const bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
 
     // Now plot the points on the line based on the lower bound and the interval:
     for (let x = 0; x < numLetters; x++) {

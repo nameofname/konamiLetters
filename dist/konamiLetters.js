@@ -108,7 +108,6 @@
 	var lines = void 0;
 	var letters = [];
 	var interval = null;
-	var totalLettersUsed = 0;
 	var assignmentOffset = 0;
 	var totalRange = 0;
 	
@@ -136,10 +135,8 @@
 	        line.interval = line.range / line.numLetters;
 	
 	
-	        _createPlot(line);}
+	        _createPlot(line);}};
 	
-	
-	    return this;};
 	
 	
 	
@@ -206,7 +203,9 @@
 	
 	
 	var _assignLetters = function _assignLetters() {
+	
 	    var letterNum = letters.length;
+	    var totalLettersUsed = 0;
 	
 	
 	    for (var i = 0; i < lines.length; i++) {
@@ -221,10 +220,7 @@
 	
 	
 	    if (letterNum !== totalLettersUsed) {
-	
-	
-	        lines[lines.length - 1].numLetters += letterNum - totalLettersUsed;
-	        totalLettersUsed += letterNum - totalLettersUsed;}};
+	        lines[lines.length - 1].numLetters += letterNum - totalLettersUsed;}};
 	
 	
 	
@@ -325,8 +321,8 @@
 	    var interval = line.interval;
 	    var lower = line.hasOwnProperty('xLower') ? line.xLower : line.yLower;
 	    var equation = line.equation;
-	    var bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;;
-	    var bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;;
+	    var bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;
+	    var bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
 	
 	
 	    for (var x = 0; x < numLetters; x++) {
