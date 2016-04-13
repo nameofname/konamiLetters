@@ -102,26 +102,15 @@
 	
 	
 	
+	var textNodes = [];
+	var nodeClass = 'nerp';
+	var nodeClassName = '.' + nodeClass;
 	var lines = void 0;
 	var letters = [];
-	var textNodes = [];
 	var interval = null;
-	var bodyHeight = null;
-	var bodyWidth = null;
 	var totalLettersUsed = 0;
 	var assignmentOffset = 0;
 	var totalRange = 0;
-	var nodeClass = 'nerp';
-	var nodeClassName = '.' + nodeClass;
-	
-	
-	var newNum = function newNum() {
-	    return Math.floor(Math.random() * 256);};
-	
-	var _newColor = function _newColor() {
-	    var color = 'rgb(' + newNum() + ',' + newNum() + ',' + newNum() + ')';
-	    return color;};
-	
 	
 	
 	
@@ -130,47 +119,24 @@
 	
 	var _init = function _init() {
 	
-	    var letterNum = void 0;
-	
 	    _calculateRanges();
 	
 	    _cloneLetters();
 	
-	
-	
 	    _prepDocument();
 	
-	    letterNum = letters.length;
-	
-	
-	    for (var i = 0; i < lines.length; i++) {
-	        var linea = lines[i];
-	
-	
-	
-	        linea.numLetters = Math.floor(letterNum * (linea.range / totalRange));
-	        totalLettersUsed += linea.numLetters;}
-	
-	
-	
-	
-	    if (letterNum !== totalLettersUsed) {
-	
-	
-	        lines[lines.length - 1].numLetters += letterNum - totalLettersUsed;
-	        totalLettersUsed += letterNum - totalLettersUsed;}
-	
+	    _assignLetters();
 	
 	
 	
 	    for (var j = 0; j < lines.length; j++) {
-	        var lineb = lines[j];
+	        var line = lines[j];
 	
 	
-	        lineb.interval = lineb.range / lineb.numLetters;
+	        line.interval = line.range / line.numLetters;
 	
 	
-	        _createPlot(lineb);}
+	        _createPlot(line);}
 	
 	
 	    return this;};
@@ -207,11 +173,17 @@
 	
 	
 	
-	var _setStyleString = function _setStyleString(str) {
-	    var style = $('<style type="text/css">' + str + '</style>');
-	    $('html > head').append(style);};
 	
 	
+	
+	
+	
+	var _createStyleTag = function _createStyleTag(str) {
+	    var head = document.getElementsByTagName('head')[0];
+	    var style = document.createElement('style');
+	    style.type = 'text/css';
+	    style.appendChild(document.createTextNode(str));
+	    head.appendChild(style);};
 	
 	
 	
@@ -219,32 +191,40 @@
 	
 	
 	var _prepDocument = function _prepDocument() {
+	
 	    var motionStyle = nodeClassName + '{' + 
 	    'position: absolute;' + 
 	    'transition: top 20s, left 20s, font-size 20s;' + 
 	    'transform: translate3d(0,0,0); }';
 	
 	
-	    $(nodeClassName).each(function () {
-	        var position = $(this).offset();
-	        $(this).css({ left: position.left + 'px', top: position.top + 'px' });});
+	    _createStyleTag(motionStyle);};
 	
 	
 	
-	    _setStyleString(motionStyle);
-	
-	
-	    var $clonedLetters = $(nodeClassName).detach();
-	
-	
-	    $('body').empty();
-	    $('body').append($clonedLetters);
-	    $('link').remove();
 	
 	
 	
-	    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
-	    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;};
+	var _assignLetters = function _assignLetters() {
+	    var letterNum = letters.length;
+	
+	
+	    for (var i = 0; i < lines.length; i++) {
+	        var line = lines[i];
+	
+	
+	
+	        line.numLetters = Math.floor(letterNum * (line.range / totalRange));
+	        totalLettersUsed += line.numLetters;}
+	
+	
+	
+	
+	    if (letterNum !== totalLettersUsed) {
+	
+	
+	        lines[lines.length - 1].numLetters += letterNum - totalLettersUsed;
+	        totalLettersUsed += letterNum - totalLettersUsed;}};
 	
 	
 	
@@ -345,6 +325,8 @@
 	    var interval = line.interval;
 	    var lower = line.hasOwnProperty('xLower') ? line.xLower : line.yLower;
 	    var equation = line.equation;
+	    var bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;;
+	    var bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;;
 	
 	
 	    for (var x = 0; x < numLetters; x++) {
@@ -386,15 +368,22 @@
 	
 	
 	
+	var newNum = function newNum() {return Math.floor(Math.random() * 256);};
+	var _newColor = function _newColor() {return 'rgb(' + newNum() + ',' + newNum() + ',' + newNum() + ')';};
+	
+	
 	
 	
 	var flashColors = function flashColors() {
 	
-	    interval = setInterval(function () {
+	    var flash = function flash() {
 	        for (var k = 0; k < letters.length; k++) {
-	            letters[k].style.color = _newColor();}}, 
+	            letters[k].style.color = _newColor();}};
 	
-	    5000);};
+	
+	
+	    flash();
+	    interval = setInterval(flash, 1000);};
 	
 	
 	

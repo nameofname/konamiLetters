@@ -24,26 +24,15 @@
  */
 
 
+const textNodes = [];
+const nodeClass = 'nerp';
+const nodeClassName = '.' + nodeClass;
 let lines; // a reference to the pattern passed to the entry function.
 let letters = []; // References to all of the wrapped letters on the page, and all the text nodes on the page:
-const textNodes = [];
 let interval = null; // an interval for updating the color which can be stopped.
-let bodyHeight = null; // The width and height of the body document that you are dealing with.
-let bodyWidth = null;
 let totalLettersUsed = 0; // The total letters assigned to a line:
 let assignmentOffset = 0; // Place holder used to iterate over all the letters on the page.
 let totalRange = 0;
-const nodeClass = 'nerp';
-const nodeClassName = '.' + nodeClass;
-
-// Generate a new random RGB color.
-const newNum = () => {
-    return Math.floor(Math.random() * 256);
-};
-const _newColor = function () {
-    const color = 'rgb('+ newNum()  +','+ newNum() +','+ newNum() +')';
-    return color;
-};
 
 
 /**
@@ -52,47 +41,24 @@ const _newColor = function () {
  */
 const _init = function () {
 
-    let letterNum;
-
     _calculateRanges(); // calculate the range of each line
 
     _cloneLetters(); // Clone all the letters you are going to use, wrapping the clones in a span tag
 
-    // Set the x y default position of each of the letters.
-    // Remove stylesheets and Add base styling to make this all possible:
-    _prepDocument();
+    _prepDocument(); // Adds styling to the page for the CSS transition
 
-    letterNum = letters.length;
-
-    // For each line, figure out how many letters should be assigned to that line:
-    for (let i=0; i < lines.length; i++) {
-        const linea = lines[i];
-
-        // The lines number of letters is the ratio of the lines range by the total range of all lines passed,
-        // multiplied by the total number of letters in the document.
-        linea.numLetters = Math.floor(letterNum * (linea.range / totalRange));
-        totalLettersUsed += linea.numLetters;
-    }
-
-    // Note * Since we are using Math.floor to calculate the numLetters - sometimes there will be a small remainder.
-    // Check for this case and adjust:
-    if (letterNum !== totalLettersUsed) {
-
-        // Add the remainder letters to the last line:
-        lines[lines.length - 1].numLetters += (letterNum - totalLettersUsed);
-        totalLettersUsed += (letterNum - totalLettersUsed);
-    }
+    _assignLetters(); // assign the letters to the document
 
     // Now that we have assigned all the letters to one line or another, figure out the interval for each line,
-    // and create a plot for each line.
+    // and create a plot for each line
     for (let j=0; j< lines.length; j++) {
-        const lineb = lines[j];
+        const line = lines[j];
 
         // Find the interval of each line based on the number of letters divided by the range:
-        lineb.interval = lineb.range / lineb.numLetters;
+        line.interval = line.range / line.numLetters;
 
         // For each function, invoke it for it's specified range along the specified interval:
-        _createPlot(lineb);
+        _createPlot(line);
     }
 
     return this;
@@ -129,46 +95,60 @@ const _calculateRanges = function () {
     }
 };
 
-const _setStyleString = str => {
-    const style = $('<style type="text/css">'+ str +'</style>');
-    $('html > head').append(style);
+/**
+ * Creates a style tag and appends it to the head with the given CSS string
+ * @param str
+ * @private
+ */
+const _createStyleTag = str => {
+    const head = document.getElementsByTagName('head')[0];
+    const style = document.createElement('style');
+    style.type = 'text/css';
+    style.appendChild(document.createTextNode(str));
+    head.appendChild(style);
 };
 
 /**
  * Preps the document to be manipulated. Removes all stylesheets and adds some base styling:
  * @private
  */
-    // TODO !!! THIS DOES NOT WORK THE WAY I WANT IT TO AT ALL!!!!!!
-    // IT SHOULD WRAP THE DIVS, NOT REMOVE THEM THEN REPLACE THEM, AND USE RELATIVE POSITIONING.
 const _prepDocument = function () {
+
     const motionStyle = nodeClassName + '{' +
         'position: absolute;' +
         'transition: top 20s, left 20s, font-size 20s;' +
         'transform: translate3d(0,0,0); }';
 
-    // for each letter, set the top and left position
-    $(nodeClassName).each(function (){
-        const position = $(this).offset();
-        $(this).css({left : position.left + 'px', top : position.top + 'px'});
-    });
-
     // next apply a motion style transform,
-    _setStyleString(motionStyle);
-
-    // Now select all of the cloned letter elements on the page, and remove them temporarily:
-    const $clonedLetters = $(nodeClassName).detach();
-
-    // remove everything from the body (including stylesheets), then re-attach the nerps.
-    $('body').empty();
-    $('body').append($clonedLetters);
-    $('link').remove();
-
-    // set a transition for visibility on all div elements
-    //_setStyleString('div { transition: visibility: 5s;}');// can't figure out why this used to be here ...
-    bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;
-    bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;
+    _createStyleTag(motionStyle);
 };
 
+/**
+ * Assigns the letters on the page to each of the lines in the pattern :
+ * @private
+ */
+const _assignLetters = () => {
+    const letterNum = letters.length;
+
+    // For each line, figure out how many letters should be assigned to that line:
+    for (let i=0; i < lines.length; i++) {
+        const line = lines[i];
+
+        // The lines number of letters is the ratio of the lines range by the total range of all lines passed,
+        // multiplied by the total number of letters in the document.
+        line.numLetters = Math.floor(letterNum * (line.range / totalRange));
+        totalLettersUsed += line.numLetters;
+    }
+
+    // Note * Since we are using Math.floor to calculate the numLetters - sometimes there will be a small remainder.
+    // Check for this case and adjust:
+    if (letterNum !== totalLettersUsed) {
+
+        // Add the remainder letters to the last line:
+        lines[lines.length - 1].numLetters += (letterNum - totalLettersUsed);
+        totalLettersUsed += (letterNum - totalLettersUsed);
+    }
+};
 
 /**
  * Wrap each of the letters on the page in a span tag, and return a DOM reference to the letters on the page.
@@ -267,6 +247,8 @@ const _createPlot = function(line) {
     const interval = line.interval;
     const lower = line.hasOwnProperty('xLower') ? line.xLower : line.yLower;
     const equation = line.equation;
+    const bodyHeight = document.getElementsByTagName('body')[0].offsetHeight;;
+    const bodyWidth = document.getElementsByTagName('body')[0].offsetWidth;;
 
     // Now plot the points on the line based on the lower bound and the interval:
     for (let x = 0; x < numLetters; x++) {
@@ -307,16 +289,23 @@ const startMoving = function () {
     }
 };
 
+// Generate a new random RGB color.
+const newNum = () => Math.floor(Math.random() * 256);
+const _newColor = () => 'rgb('+ newNum()  +','+ newNum() +','+ newNum() +')';
+
 /**
  * Set an interval to flash a different color every half second.
  */
 const flashColors = function () {
 
-    interval = setInterval(function (){
+    const flash = () => {
         for (let k = 0; k < letters.length; k++) {
             letters[k].style.color = _newColor();
         }
-    }, 5000);
+    };
+
+    flash();
+    interval = setInterval(flash, 1000);
 };
 
 /**
@@ -334,4 +323,5 @@ module.exports = function (pattern) {
     lines = pattern;
     _init();
     startMoving();
+    //flashColors();
 };
