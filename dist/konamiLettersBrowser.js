@@ -295,8 +295,14 @@
 	            docFrag.appendChild(_letter);}
 	
 	
-	        body.appendChild(docFrag);}
+	        body.appendChild(docFrag);
 	
+	        parentElement.appendChild(removedNode);}
+	
+	
+	
+	    for (var _i = 0; _i < textNodes.length; _i++) {
+	        textNodes[_i].parentElement.removeChild(textNodes[_i]);}
 	
 	
 	    return document.getElementsByClassName(nodeClass);};

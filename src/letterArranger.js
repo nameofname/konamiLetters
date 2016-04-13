@@ -218,7 +218,13 @@ const _cloneLetters = function() {
         }
 
         body.appendChild(docFrag);
-        //parentElement.appendChild(removedNode);
+        // *Note : Add back the removed node so this run doesn't affect positioning of subsquent loops
+        parentElement.appendChild(removedNode);
+    }
+
+    // Now remove all the text nodes so that they arent' there under the copies of all the letters :
+    for (let i = 0; i < textNodes.length; i++) {
+        textNodes[i].parentElement.removeChild(textNodes[i]);
     }
 
     return document.getElementsByClassName(nodeClass);
