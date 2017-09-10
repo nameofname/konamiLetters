@@ -1,5 +1,5 @@
 {
-  "name": "konami_letters",
+  "name": "konamiLetters",
   "version": "1.0.0",
   "description": "a little project to perform web-anEntryimations in response to a secret key code",
   "main": "dist/index.js",

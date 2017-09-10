@@ -2,33 +2,49 @@
 
 // Key array defaults to the konami code :
 const defaultSeries = [38,38,40,40,37,39,37,39,66,65];
-// An array of the keys pressed (to listen for the konami code):
-let keysPressed = [];
-let currIndex = 0;
 
-const keyTracker = (keyArray, callback) => {
-    document.onkeydown = function(e) {
-        const key = e.which;
-        keyArray = keyArray || defaultSeries;
+// find the matching segment to the character array at the end of the current array
+// eg. if your character array is 1, 2, 3, and your current array is 1, 1, 2, you want to match on 1, 2
+const findMatchingSegment = (charArr, currArr) => {
 
-        if (keyArray[currIndex] === key) {
-            // If the key pressed was the next in the series, push it to the array of pressed letters :
-            keysPressed.push(key);
-            currIndex+=1;
+    if (currArr.length === 0) {
+        return currArr;
+    }
 
-        } else {
-            // if the key pressed does not match the current, then start over :
-            keysPressed = [];
-            currIndex = 0;
-            if (keyArray[0] === key) {
-                keysPressed.push(key);
-                currIndex+=1;
-            }
+    let mismatchIdx;
+    let i = 0;
+    while (i < currArr.length) {
+        if ((currArr[i] !== charArr[i])) {
+            mismatchIdx = i;
         }
+        i++;
+    }
 
-        // Now test for a complete match:
-        if (keysPressed.length === keyArray.length) { callback(); }
-    };
+    if (mismatchIdx !== undefined) {
+        console.log('here : ', charArr, currArr, mismatchIdx)
+        return findMatchingSegment(charArr, currArr.splice(mismatchIdx, currArr.length));
+    } else {
+        return currArr;
+    }
 };
 
-module.exports = keyTracker;
+module.exports = (charArr, callback) => {
+    let currArr = [];
+    charArr = charArr || defaultSeries;
+
+    document.addEventListener('keypress', (e) => {
+        currArr.push(e.which);
+
+        if (e.which !== charArr[currArr.length - 1]) {
+            currArr = findMatchingSegment(charArr, currArr);
+        }
+
+        if (currArr.length === charArr.length) {
+            if (callback && (typeof callback === 'function')) {
+                callback();
+            }
+            currArr.length = 0;
+        }
+
+    });
+};
