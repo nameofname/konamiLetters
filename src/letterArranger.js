@@ -319,5 +319,5 @@ module.exports = function (pattern) {
     lines = pattern;
     _init();
     startMoving();
-    //flashColors();
+    flashColors();
 };
