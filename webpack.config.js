@@ -14,17 +14,17 @@ module.exports = {
         //filename: 'konamiLetters.js',
         //sourceMapFilename: './dist/[file].map'
     },
-	module: {
-        loaders: [
-            {
-                test: /.js/,
-                exclude: /(node_modules)/,
-                loader: 'babel',
-                query: {
-                    presets: ['es2015', 'stage-2']
-                }
-            }
-        ]
-	},
+	// module: {
+     //    loaders: [
+     //        {
+     //            test: /.js/,
+     //            exclude: /(node_modules)/,
+     //            loader: 'babel',
+     //            query: {
+     //                presets: ['es2015', 'stage-2']
+     //            }
+     //        }
+     //    ]
+	// },
     recordsOutputPath: path.join(__dirname, "/dist/records.json")
 };

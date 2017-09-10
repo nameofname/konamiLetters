@@ -3,3 +3,4 @@
 patterns/placeholder.txt
 node_modules/*
 npm-debug.log
+dist
