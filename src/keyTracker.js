@@ -7,22 +7,25 @@ const defaultSeries = [38,38,40,40,37,39,37,39,66,65];
 // eg. if your character array is 1, 2, 3, and your current array is 1, 1, 2, you want to match on 1, 2
 const findMatchingSegment = (charArr, currArr) => {
 
+    while (currArr[0] !== charArr[0] && currArr.length) {
+        currArr.shift();
+    }
+
     if (currArr.length === 0) {
         return currArr;
     }
 
+
     let mismatchIdx;
-    let i = 0;
-    while (i < currArr.length) {
-        if ((currArr[i] !== charArr[i])) {
+    for (let i = 0; i < currArr.length; i++) {
+        if (currArr[i] !== charArr[i]) {
             mismatchIdx = i;
         }
-        i++;
     }
 
     if (mismatchIdx !== undefined) {
-        console.log('here : ', charArr, currArr, mismatchIdx)
-        return findMatchingSegment(charArr, currArr.splice(mismatchIdx, currArr.length));
+        const spliced = currArr.splice(mismatchIdx, currArr.length);
+        return findMatchingSegment(charArr, spliced);
     } else {
         return currArr;
     }
