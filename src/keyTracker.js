@@ -43,7 +43,9 @@ const findMatchingSegment_bak = (charArr, currArr) => {
 
 
 /**
- * in the case where you have a mismatch, part of what was typed might still match the beginning of the character
+ * This private function gets called when the last character just added to the array doesn't match the corresponding
+ * character in the array you are matching against.
+ * In this case (you have a mismatch), part of what was typed might still match the beginning of the character
  * array. for example consider :
  * charArr = [a, b, a, b, c];
  * currArr = [a, b, a, b, a];
@@ -54,7 +56,7 @@ const findMatchingSegment_bak = (charArr, currArr) => {
  * currArr = [one me one]
  *
  * I would work backwards matching the e from "one" to the e from "me" - but that doesn't fit, i need to fall back again
- * until i hit the first e, from "one" 
+ * until i hit the first e, from "one."
  * @param charArr
  * @param currArr
  * @param currI
@@ -89,9 +91,9 @@ const findMatchingSegment = (charArr, currArr, currI) => {
     }
 
     if (noViolations) {
-        return currArr.splice(lastIdx - highestMatchingIdx, lastIdx);
+        return currArr.splice((lastIdx - highestMatchingIdx + 1), lastIdx);
     } else {
-        return findMatchingSegment(charArr, currArr, lastIdx - 1);
+        return findMatchingSegment(charArr, currArr, currI - 1);
     }
 
 };
@@ -107,7 +109,6 @@ module.exports = (charArr, callback) => {
             currArr = findMatchingSegment(charArr, currArr);
         }
 
-        console.log('currArr', currArr);
         if (currArr.length === charArr.length) {
             if (callback && (typeof callback === 'function')) {
                 callback();
