@@ -3,45 +3,6 @@
 // Key array defaults to the konami code :
 const defaultSeries = [38,38,40,40,37,39,37,39,66,65];
 
-// find the matching segment to the character array at the end of the current array
-// eg. if your character array is 1, 2, 3, and your current array is 1, 1, 2, you want to match on 1, 2
-const findMatchingSegment_bak = (charArr, currArr) => {
-
-    // note * this is actually impossible - the first letters must match if we are in this function
-    while (currArr[0] !== charArr[0] && currArr.length) {
-        currArr.shift();
-    }
-
-    if (currArr.length === 0) {
-        return currArr;
-    }
-
-
-    // TODO ! this is not necessary - we check every time a new entry is placed on the end so mismatchIdx will always be he last character.
-    let mismatchIdx;
-    for (let i = 0; i < currArr.length; i++) {
-        if (currArr[i] !== charArr[i]) {
-            mismatchIdx = i;
-        }
-    }
-
-    if (mismatchIdx === undefined) {
-        return currArr;
-    }
-
-    // this did not cover all cases:
-    if (mismatchIdx !== undefined) {
-        const spliced = currArr.splice(mismatchIdx, currArr.length);
-        return findMatchingSegment(charArr, spliced);
-    } else {
-        return currArr;
-    }
-
-
-
-};
-
-
 /**
  * This private function gets called when the last character just added to the array doesn't match the corresponding
  * character in the array you are matching against.
