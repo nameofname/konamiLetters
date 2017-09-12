@@ -1,7 +1,7 @@
 konami_letters
 ==============
 
-A konami code script that re-arranges the letters on your page to do form a pattern that you specify.
+A konami code script that re-arranges the letters on your page to form a pattern that you specify.
 
 TODO ::: 
 ----
