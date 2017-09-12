@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "rm -rf dist/* && ./node_modules/.bin/babel ./src --out-dir ./dist --copy-files",
-    "prepublish": "yarn run build"
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
