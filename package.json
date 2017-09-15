@@ -4,7 +4,7 @@
   "description": "a little project to perform web-anEntryimations in response to a secret key code",
   "main": "dist/index.js",
   "dependencies": {
-    "char-code-sequence": "^0.0.1",
+    "char-code-sequence": "^0.0.3",
     "deep-freeze": "^0.0.1",
     "install": "^0.4.2",
     "npm": "^3.7.1"
